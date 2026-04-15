@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 4 en cours - Design System (tokens + docs)
+**Phase** : Step 4 en cours - Astro setup complet, prêt pour composants
 
 ---
 
@@ -63,7 +63,7 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - `/backend/src/services/scraper/config.ts` (sélecteurs corrigés)
 - `/backend/src/services/scraper/ScraperService.ts` (extraction améliorée)
 
-### 2. ✅ Design System Créé (2026-04-15)
+### 2. ✅ Design System + Astro Setup (2026-04-15)
 
 **Fichiers créés** :
 - `/docs/DESIGN-SYSTEM.md` → Doc complète (10 composants, tokens, conventions, a11y)
@@ -73,10 +73,22 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
   - Spacing (16 paliers)
   - Shadows, radius, transitions, z-index
   - Animations (pulse, fadeIn, slideUp, live-pulse)
+- `/frontend/src/styles/global.css` → Import tokens + Tailwind + base styles
+- `/frontend/src/layouts/BaseLayout.astro` → Layout de base avec SEO
+- `/frontend/src/pages/index.astro` → Page test design system
+- `/frontend/astro.config.mjs` → Config Astro 5 + React + Tailwind
+- `/frontend/tailwind.config.mjs` → Tailwind avec références tokens CSS
+- `/frontend/tsconfig.json` → TypeScript strict + path aliases
+
+**Stack validée** :
+- Astro 5.0 (stable)
+- React 18.3 (Islands)
+- Tailwind CSS 3.4 (hybrid avec tokens)
+- TypeScript 5.7 (strict mode)
 
 **Architecture validée** :
 - Tokens en CSS Custom Properties (pas de JS)
-- Dark mode : `data-theme="dark"` attribute
+- Dark mode : `data-theme="dark"` attribute + localStorage
 - Hybrid Tailwind : utilities layout + tokens design
 - 10 composants essentiels spécifiés
 
@@ -99,8 +111,8 @@ mysql -u root -p baseball_fr < docs/schema.sql
 ## 📋 Prochaines Étapes (Ordre)
 
 1. **Step 4.1** : ✅ Design System tokens + doc créés
-2. **Step 4.2** : Créer 3 composants UI de base (Button, Card, Badge)
-3. **Step 4.3** : Setup Astro + Tailwind config
+2. **Step 4.2** : ✅ Setup Astro + Tailwind config
+3. **Step 4.3** : Créer 3 composants UI de base (Button, Card, Badge)
 4. **Step 4.4** : Template Homepage MVP
 5. **Step 5** : Pages Match + Player + Standings
 6. **Step 6** : CMS admin (Node + Express + TipTap)
