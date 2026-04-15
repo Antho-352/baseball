@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Architecture complète, prêt pour Step 4 (Frontend)
+**Phase** : Step 4 en cours - Design System (tokens + docs)
 
 ---
 
@@ -63,7 +63,24 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - `/backend/src/services/scraper/config.ts` (sélecteurs corrigés)
 - `/backend/src/services/scraper/ScraperService.ts` (extraction améliorée)
 
-### 2. Test Intégration UnifiedProvider
+### 2. ✅ Design System Créé (2026-04-15)
+
+**Fichiers créés** :
+- `/docs/DESIGN-SYSTEM.md` → Doc complète (10 composants, tokens, conventions, a11y)
+- `/frontend/src/styles/tokens.css` → 150+ CSS Custom Properties
+  - Couleurs (light + dark mode)
+  - Typographie (Inter font, 10 tailles)
+  - Spacing (16 paliers)
+  - Shadows, radius, transitions, z-index
+  - Animations (pulse, fadeIn, slideUp, live-pulse)
+
+**Architecture validée** :
+- Tokens en CSS Custom Properties (pas de JS)
+- Dark mode : `data-theme="dark"` attribute
+- Hybrid Tailwind : utilities layout + tokens design
+- 10 composants essentiels spécifiés
+
+### 3. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
@@ -71,7 +88,7 @@ const games = await provider.getGames('mlb', new Date());
 // Vérifier données complètes
 ```
 
-### 3. Setup MySQL
+### 4. Setup MySQL
 
 ```bash
 mysql -u root -p baseball_fr < docs/schema.sql
@@ -81,11 +98,14 @@ mysql -u root -p baseball_fr < docs/schema.sql
 
 ## 📋 Prochaines Étapes (Ordre)
 
-1. **Step 4** : Design System (tokens CSS) → `/frontend/src/styles/tokens.css`
-2. **Step 5** : Frontend Astro setup + pages templates
-3. **Step 6** : CMS admin (Node + Express + TipTap)
-4. **Step 7** : Cron jobs sync données
-5. **V1.5** : Activer ScraperService (après validation sélecteurs)
+1. **Step 4.1** : ✅ Design System tokens + doc créés
+2. **Step 4.2** : Créer 3 composants UI de base (Button, Card, Badge)
+3. **Step 4.3** : Setup Astro + Tailwind config
+4. **Step 4.4** : Template Homepage MVP
+5. **Step 5** : Pages Match + Player + Standings
+6. **Step 6** : CMS admin (Node + Express + TipTap)
+7. **Step 7** : Cron jobs sync données
+8. **V1.5** : Activer ScraperService (sélecteurs validés)
 
 ---
 
