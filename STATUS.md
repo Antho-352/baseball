@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 7 complet - Homepage + 3 Hub ligues créés, site fonctionnel en local
+**Phase** : Step 8 en cours - Backend API créé, intégration UnifiedProvider
 
 ---
 
@@ -246,7 +246,54 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - Couleurs hero différentes (MLB bleu, KBO rouge, NPB violet)
 - Mock data réaliste (noms vrais joueurs/équipes)
 
-### 7. Test Intégration UnifiedProvider
+### 7. ✅ Backend API Express (2026-04-15)
+
+**Fichiers créés** :
+- `/backend/package.json` → Dependencies Express + CORS + node-cache
+- `/backend/src/server.js` → API REST sur port 3000
+
+**Endpoints créés** :
+- `GET /api/health` → Health check + provider name
+- `GET /api/games/:league/:date?` → Matchs par ligue/date (cache 5min)
+- `GET /api/standings/:league/:season?` → Classements (cache 1h)
+- `GET /api/players/:league/top/:stat?` → Top joueurs par stat (cache 1h)
+- `GET /api/cache/stats` → Stats cache (debug)
+- `DELETE /api/cache/clear` → Clear cache (debug)
+
+**Intégration UnifiedProvider** :
+- Import `createDataProvider('unified')`
+- Appels directs aux méthodes provider
+- Types validés (league: mlb|kbo|npb)
+- Date parsing + validation
+
+**Caching NodeCache** :
+- TTL 5min pour games (données live)
+- TTL 1h pour standings/players (moins volatiles)
+- Cache keys: `games:mlb:2026-04-15`, `standings:kbo:2026`
+- Stats accessibles via `/api/cache/stats`
+
+**CORS** :
+- Autorisé pour localhost:4321 (Astro dev)
+- Autorisé pour localhost:3000 (API)
+
+**Logger** :
+- Timestamp + méthode + path
+- Cache hits loggés
+- Erreurs loggées
+
+**Démarrage** :
+```bash
+cd backend && npm run dev  # Port 3000
+```
+
+**Test** :
+```bash
+curl http://localhost:3000/api/health
+curl http://localhost:3000/api/games/mlb/2026-04-15
+curl http://localhost:3000/api/standings/kbo/2026
+```
+
+### 8. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
