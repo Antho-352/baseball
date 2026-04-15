@@ -1,0 +1,77 @@
+---
+/**
+ * Button Component
+ *
+ * Variantes:
+ * - primary: Bouton principal (bleu)
+ * - secondary: Bouton secondaire (rouge)
+ * - ghost: Bouton transparent avec bordure
+ * - link: Lien stylisé comme bouton
+ *
+ * Tailles:
+ * - sm: Small (padding réduit)
+ * - md: Medium (défaut)
+ * - lg: Large (padding augmenté)
+ *
+ * Usage:
+ * <Button variant="primary" size="md">Cliquez ici</Button>
+ * <Button variant="ghost" size="sm" href="/page">Lien</Button>
+ */
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'link';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  disabled = false,
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+// Classes de base
+const baseClasses = 'inline-flex items-center justify-content gap-2 font-semibold rounded-md border-none cursor-pointer transition-all duration-base focus-ring';
+
+// Classes par variante
+const variantClasses = {
+  primary: 'bg-primary text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed',
+  secondary: 'bg-secondary text-white hover:bg-secondary-hover disabled:opacity-50 disabled:cursor-not-allowed',
+  ghost: 'bg-transparent text-primary border border-border hover:bg-bg-surface disabled:opacity-50 disabled:cursor-not-allowed',
+  link: 'bg-transparent text-primary hover:text-primary-hover hover:underline disabled:opacity-50 disabled:cursor-not-allowed',
+};
+
+// Classes par taille
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg',
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
+// Si href fourni, utiliser un <a>, sinon <button>
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class={classes}
+  href={href}
+  disabled={disabled}
+  type={!href ? type : undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  /* Styles supplémentaires si nécessaire (déjà géré par Tailwind + tokens) */
+  a[disabled] {
+    pointer-events: none;
+  }
+</style>

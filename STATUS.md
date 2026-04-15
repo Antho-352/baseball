@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 4 en cours - Astro setup complet, prêt pour composants
+**Phase** : Step 4 complet - Design system + 3 composants UI de base créés
 
 ---
 
@@ -92,7 +92,37 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - Hybrid Tailwind : utilities layout + tokens design
 - 10 composants essentiels spécifiés
 
-### 3. Test Intégration UnifiedProvider
+### 3. ✅ Composants UI de Base (2026-04-15)
+
+**Fichiers créés** :
+- `/frontend/src/components/ui/Button.astro` → 4 variants, 3 sizes
+  - Variants: primary, secondary, ghost, link
+  - Sizes: sm, md, lg
+  - Support href (liens) et disabled
+  - Focus ring a11y
+- `/frontend/src/components/ui/Card.astro` → 3 variants, 3 paddings
+  - Variants: default, bordered, elevated
+  - Paddings: sm, md, lg
+  - Hover shadow sur elevated
+- `/frontend/src/components/ui/Badge.astro` → 4 status baseball, 2 sizes
+  - Status: live (pulse animation), finished, postponed, scheduled
+  - Sizes: sm, md
+  - Uppercase + tracking-wide
+
+**Page test mise à jour** :
+- `/frontend/src/pages/index.astro` → Démo tous composants
+  - Button: 7 exemples (variants + sizes + disabled)
+  - Card: 3 variants démontrés
+  - Badge: 6 exemples (4 status + 2 sizes)
+
+**Validation** :
+- ✅ Tailwind + tokens hybrid fonctionne
+- ✅ Dark mode responsive
+- ✅ TypeScript strict sans erreurs
+- ✅ Props typées avec interface
+- ✅ Composants réutilisables
+
+### 4. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
@@ -110,13 +140,13 @@ mysql -u root -p baseball_fr < docs/schema.sql
 
 ## 📋 Prochaines Étapes (Ordre)
 
-1. **Step 4.1** : ✅ Design System tokens + doc créés
-2. **Step 4.2** : ✅ Setup Astro + Tailwind config
-3. **Step 4.3** : Créer 3 composants UI de base (Button, Card, Badge)
-4. **Step 4.4** : Template Homepage MVP
-5. **Step 5** : Pages Match + Player + Standings
-6. **Step 6** : CMS admin (Node + Express + TipTap)
-7. **Step 7** : Cron jobs sync données
+1. **Step 4** : ✅ Design System + Astro + 3 composants UI complet
+2. **Step 5** : Créer 7 composants UI restants (ScoreBoard, GameCard, PlayerCard, StandingsTable, StatWidget, NavBar, Footer)
+3. **Step 6** : Template Homepage MVP
+4. **Step 7** : Pages Match + Player + Standings
+5. **Step 8** : Backend API (Node + Express)
+6. **Step 9** : CMS admin (TipTap éditeur)
+7. **Step 10** : Cron jobs sync données
 8. **V1.5** : Activer ScraperService (sélecteurs validés)
 
 ---

@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import Button from '@components/ui/Button.astro';
+import Card from '@components/ui/Card.astro';
+import Badge from '@components/ui/Badge.astro';
 ---
 
 <BaseLayout
@@ -56,37 +59,64 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 
           <!-- Buttons -->
           <div>
-            <h3 class="text-xl font-semibold mb-3">Boutons</h3>
-            <div class="flex gap-4">
-              <button class="btn btn-primary">Primary</button>
-              <button class="btn btn-secondary">Secondary</button>
-              <button class="btn btn-ghost">Ghost</button>
-              <button class="btn btn-primary" disabled>Disabled</button>
+            <h3 class="text-xl font-semibold mb-3">Boutons (Composant)</h3>
+            <div class="flex flex-wrap gap-4">
+              <Button variant="primary" size="md">Primary</Button>
+              <Button variant="secondary" size="md">Secondary</Button>
+              <Button variant="ghost" size="md">Ghost</Button>
+              <Button variant="link" size="md">Link</Button>
+              <Button variant="primary" size="sm">Small</Button>
+              <Button variant="primary" size="lg">Large</Button>
+              <Button variant="primary" disabled>Disabled</Button>
             </div>
           </div>
 
           <!-- Badges -->
           <div>
-            <h3 class="text-xl font-semibold mb-3">Badges</h3>
-            <div class="flex gap-3">
-              <span class="badge badge-live">EN DIRECT</span>
-              <span class="badge" style="background-color: var(--color-success-bg); color: var(--color-success);">TERMINÉ</span>
-              <span class="badge" style="background-color: var(--color-warning-bg); color: var(--color-warning);">REPORTÉ</span>
+            <h3 class="text-xl font-semibold mb-3">Badges (Composant)</h3>
+            <div class="flex flex-wrap gap-3">
+              <Badge status="live" size="md">EN DIRECT</Badge>
+              <Badge status="finished" size="md">TERMINÉ</Badge>
+              <Badge status="postponed" size="md">REPORTÉ</Badge>
+              <Badge status="scheduled" size="md">PROGRAMMÉ</Badge>
+              <Badge status="live" size="sm">LIVE SM</Badge>
+              <Badge status="finished" size="sm">FT SM</Badge>
+            </div>
+          </div>
+
+          <!-- Cards -->
+          <div>
+            <h3 class="text-xl font-semibold mb-3">Cards (Composant)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card variant="default" padding="md">
+                <h4 class="font-bold mb-2">Default</h4>
+                <p class="text-sm text-muted">Surface background sans shadow</p>
+              </Card>
+              <Card variant="bordered" padding="md">
+                <h4 class="font-bold mb-2">Bordered</h4>
+                <p class="text-sm text-muted">Avec bordure</p>
+              </Card>
+              <Card variant="elevated" padding="md">
+                <h4 class="font-bold mb-2">Elevated</h4>
+                <p class="text-sm text-muted">Avec shadow (hover pour effet)</p>
+              </Card>
             </div>
           </div>
 
           <!-- Score Board -->
           <div>
-            <h3 class="text-xl font-semibold mb-3">Score Board</h3>
-            <div class="score-board border border-border rounded-lg p-6">
-              <div class="score-board-team">Yankees</div>
-              <div class="score-board-score">
-                <span>5</span>
-                <span class="text-muted mx-2">-</span>
-                <span>3</span>
+            <h3 class="text-xl font-semibold mb-3">Score Board (CSS Classes)</h3>
+            <Card variant="bordered" padding="lg">
+              <div class="score-board">
+                <div class="score-board-team">Yankees</div>
+                <div class="score-board-score">
+                  <span>5</span>
+                  <span class="text-muted mx-2">-</span>
+                  <span>3</span>
+                </div>
+                <div class="score-board-team">Red Sox</div>
               </div>
-              <div class="score-board-team">Red Sox</div>
-            </div>
+            </Card>
           </div>
 
           <!-- Dark Mode Toggle -->

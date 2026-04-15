@@ -1,0 +1,56 @@
+---
+/**
+ * Card Component
+ *
+ * Variantes:
+ * - default: Fond surface sans shadow
+ * - bordered: Fond surface avec bordure
+ * - elevated: Fond surface avec shadow (hover)
+ *
+ * Padding:
+ * - sm: Small (12px)
+ * - md: Medium (24px, défaut)
+ * - lg: Large (32px)
+ *
+ * Usage:
+ * <Card variant="elevated" padding="md">
+ *   <h3>Titre</h3>
+ *   <p>Contenu</p>
+ * </Card>
+ */
+
+interface Props {
+  variant?: 'default' | 'bordered' | 'elevated';
+  padding?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  padding = 'md',
+  class: className = '',
+} = Astro.props;
+
+// Classes de base
+const baseClasses = 'bg-bg-surface rounded-lg transition-shadow duration-base';
+
+// Classes par variante
+const variantClasses = {
+  default: '',
+  bordered: 'border border-border',
+  elevated: 'shadow-md hover:shadow-lg',
+};
+
+// Classes par padding
+const paddingClasses = {
+  sm: 'p-3',
+  md: 'p-6',
+  lg: 'p-8',
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${paddingClasses[padding]} ${className}`;
+---
+
+<div class={classes}>
+  <slot />
+</div>

@@ -1,0 +1,70 @@
+---
+/**
+ * Badge Component
+ *
+ * Variantes status (baseball-specific):
+ * - live: Match en direct (rouge avec pulse animation)
+ * - finished: Match terminé (vert)
+ * - postponed: Match reporté (orange/amber)
+ * - scheduled: Match programmé (gris)
+ *
+ * Tailles:
+ * - sm: Small (10px padding, 12px text)
+ * - md: Medium (12px padding, 14px text)
+ *
+ * Usage:
+ * <Badge status="live">EN DIRECT</Badge>
+ * <Badge status="finished" size="sm">TERMINÉ</Badge>
+ */
+
+interface Props {
+  status?: 'live' | 'finished' | 'postponed' | 'scheduled';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const {
+  status = 'scheduled',
+  size = 'md',
+  class: className = '',
+} = Astro.props;
+
+// Classes de base
+const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-full uppercase tracking-wide';
+
+// Classes par status
+const statusClasses = {
+  live: 'bg-live-bg text-live animate-pulse',
+  finished: 'bg-success-bg text-success',
+  postponed: 'bg-warning-bg text-warning',
+  scheduled: 'bg-bg-surface text-text-muted border border-border',
+};
+
+// Classes par taille
+const sizeClasses = {
+  sm: 'px-2 py-1 text-xs',
+  md: 'px-3 py-1.5 text-xs',
+};
+
+const classes = `${baseClasses} ${statusClasses[status]} ${sizeClasses[size]} ${className}`;
+---
+
+<span class={classes}>
+  <slot />
+</span>
+
+<style>
+  /* Animation pulse pour LIVE (déjà dans tokens.css mais on peut override) */
+  .animate-pulse {
+    animation: live-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes live-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+</style>
