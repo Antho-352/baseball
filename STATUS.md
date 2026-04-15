@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 5 complet - 10 composants UI créés, prêt pour Homepage MVP
+**Phase** : Step 6 complet - Homepage MVP créée, prêt pour Hub ligues
 
 ---
 
@@ -175,7 +175,40 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 
 **Total** : 10 composants UI complets (3 base + 7 spécifiques)
 
-### 5. Test Intégration UnifiedProvider
+### 5. ✅ Homepage MVP (2026-04-15)
+
+**Fichier** : `/frontend/src/pages/index.astro`
+
+**Sections créées** :
+1. Hero section (bleu primary, CTAs vers ligues)
+2. Stats overview (4 StatWidgets: matchs, live, pronostics, win rate)
+3. Scores du jour (3 GameCards avec mock data)
+4. Pronostics du jour (2 Cards featured + CTA affiliation Betclic)
+5. Top joueurs (3 PlayerCards)
+6. News récentes (3 Cards articles)
+7. CTA newsletter (input email + bouton)
+
+**Composants utilisés** :
+- BaseLayout (nav + footer automatiques)
+- GameCard × 3
+- PlayerCard × 3
+- StatWidget × 4
+- Card × 5
+- Button × 10+
+
+**Mock data** :
+- todayGames[] : 3 matchs (1 live, 1 scheduled, 1 final)
+- topPlayers[] : 3 joueurs (Ohtani, Judge, Betts)
+- recentNews[] : 3 articles
+
+**Démonstration** :
+- ✅ Tous les composants UI fonctionnels
+- ✅ Navigation sticky + footer
+- ✅ Dark mode toggle opérationnel
+- ✅ Responsive mobile/tablet/desktop
+- ✅ Affiliation ANJ compliant (warning footer)
+
+### 6. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
@@ -193,14 +226,13 @@ mysql -u root -p baseball_fr < docs/schema.sql
 
 ## 📋 Prochaines Étapes (Ordre)
 
-1. **Step 4-5** : ✅ Design System + 10 composants UI complets
-2. **Step 6** : Template Homepage MVP (en cours)
-3. **Step 7** : Pages Hub ligues (/mlb/, /kbo/, /npb/)
-4. **Step 8** : Pages Match + Player + Standings
-5. **Step 9** : Backend API (Node + Express)
-6. **Step 10** : CMS admin (TipTap éditeur)
-7. **Step 11** : Cron jobs sync données
-8. **V1.5** : Activer ScraperService (sélecteurs validés)
+1. **Step 4-6** : ✅ Design System + 10 composants UI + Homepage MVP
+2. **Step 7** : Pages Hub ligues (/mlb/, /kbo/, /npb/) (en cours)
+3. **Step 8** : Pages Match + Player + Standings
+4. **Step 9** : Backend API (Node + Express)
+5. **Step 10** : CMS admin (TipTap éditeur)
+6. **Step 11** : Cron jobs sync données
+7. **V1.5** : Activer ScraperService (sélecteurs validés)
 
 ---
 

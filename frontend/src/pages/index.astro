@@ -1,164 +1,358 @@
 ---
+/**
+ * Homepage - Hub multi-ligues
+ *
+ * Sections:
+ * - Hero avec titre + tagline
+ * - Scores du jour (MLB, KBO, NPB)
+ * - Pronostics à la une
+ * - Top joueurs
+ * - News récentes
+ */
+
 import BaseLayout from '@layouts/BaseLayout.astro';
+import GameCard from '@components/ui/GameCard.astro';
+import PlayerCard from '@components/ui/PlayerCard.astro';
 import Button from '@components/ui/Button.astro';
 import Card from '@components/ui/Card.astro';
-import Badge from '@components/ui/Badge.astro';
+import StatWidget from '@components/ui/StatWidget.astro';
+
+// Mock data (sera remplacé par API calls)
+const todayGames = [
+  {
+    homeTeam: 'Los Angeles Dodgers',
+    awayTeam: 'New York Yankees',
+    homeScore: 5,
+    awayScore: 3,
+    status: 'live' as const,
+    startTime: new Date(),
+    gameId: 'mlb-2026-04-15-nyy-lad',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Boston Red Sox',
+    awayTeam: 'Toronto Blue Jays',
+    homeScore: null,
+    awayScore: null,
+    status: 'scheduled' as const,
+    startTime: new Date(Date.now() + 3600000), // +1h
+    gameId: 'mlb-2026-04-15-tor-bos',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Doosan Bears',
+    awayTeam: 'LG Twins',
+    homeScore: 7,
+    awayScore: 4,
+    status: 'final' as const,
+    startTime: new Date(Date.now() - 7200000), // -2h
+    gameId: 'kbo-2026-04-15-lg-doo',
+    league: 'KBO',
+  },
+];
+
+const topPlayers = [
+  {
+    name: 'Shohei Ohtani',
+    position: 'DH',
+    teamName: 'Los Angeles Dodgers',
+    stats: [
+      { label: 'AVG', value: '.304' },
+      { label: 'HR', value: '44' },
+      { label: 'RBI', value: '95' },
+    ],
+    playerId: 'shohei-ohtani',
+  },
+  {
+    name: 'Aaron Judge',
+    position: 'RF',
+    teamName: 'New York Yankees',
+    stats: [
+      { label: 'AVG', value: '.311' },
+      { label: 'HR', value: '58' },
+      { label: 'RBI', value: '144' },
+    ],
+    playerId: 'aaron-judge',
+  },
+  {
+    name: 'Mookie Betts',
+    position: 'RF',
+    teamName: 'Los Angeles Dodgers',
+    stats: [
+      { label: 'AVG', value: '.307' },
+      { label: 'HR', value: '35' },
+      { label: 'RBI', value: '82' },
+    ],
+    playerId: 'mookie-betts',
+  },
+];
+
+const recentNews = [
+  {
+    title: 'Shohei Ohtani signe le plus gros contrat de l\'histoire',
+    excerpt: 'Le joueur japonais rejoint les Dodgers pour 700 millions de dollars sur 10 ans...',
+    date: '2026-04-14',
+    category: 'Transferts',
+    slug: 'ohtani-dodgers-700m',
+  },
+  {
+    title: 'World Series 2026 : Les favoris selon les bookmakers',
+    excerpt: 'Les Dodgers et les Yankees dominent les cotes pour remporter les World Series...',
+    date: '2026-04-13',
+    category: 'Pronostics',
+    slug: 'world-series-2026-favoris',
+  },
+  {
+    title: 'KBO : Les Bears enchaînent une 5e victoire consécutive',
+    excerpt: 'Doosan confirme sa forme olympique avec une nouvelle victoire face aux Twins...',
+    date: '2026-04-12',
+    category: 'KBO',
+    slug: 'kbo-bears-5-victoires',
+  },
+];
 ---
 
 <BaseLayout
   title="home-run.fr - Baseball MLB, KBO, NPB : Scores, Stats et Pronostics"
-  description="Suivez les scores en direct, les statistiques et les pronostics pour la MLB, KBO et NPB. Votre référence baseball en français."
+  description="Suivez les scores en direct, statistiques et pronostics pour la MLB, KBO et NPB. Votre référence baseball en français."
 >
-  <div class="container mx-auto py-16">
-    <header class="text-center mb-12">
-      <h1 class="text-5xl font-bold mb-4">
-        ⚾ home-run.fr
+  <!-- Hero Section -->
+  <section class="bg-primary text-white py-16">
+    <div class="container mx-auto text-center">
+      <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+        ⚾ Baseball Live
       </h1>
-      <p class="text-xl text-muted">
-        Baseball MLB, KBO, NPB : Scores, Stats et Pronostics
+      <p class="text-xl md:text-2xl text-blue-100 mb-8">
+        Scores en direct, stats complètes et pronostics pour MLB, KBO et NPB
       </p>
-    </header>
+      <div class="flex flex-wrap justify-center gap-4">
+        <Button variant="secondary" size="lg" href="/mlb/">
+          MLB
+        </Button>
+        <Button variant="secondary" size="lg" href="/kbo/">
+          KBO
+        </Button>
+        <Button variant="secondary" size="lg" href="/npb/">
+          NPB
+        </Button>
+        <Button variant="ghost" size="lg" href="/pronostics/" class="!text-white !border-white hover:!bg-white/10">
+          Pronostics
+        </Button>
+      </div>
+    </div>
+  </section>
 
-    <main class="max-w-3xl mx-auto">
-      <section class="card mb-8">
-        <h2 class="text-3xl font-bold mb-4">Design System Test</h2>
+  <!-- Stats Overview -->
+  <section class="py-12 bg-bg-surface border-b border-border">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatWidget
+          label="Matchs aujourd'hui"
+          value="24"
+          icon="⚾"
+        />
+        <StatWidget
+          label="Matchs live"
+          value="3"
+          trend="up"
+          icon="🔴"
+        />
+        <StatWidget
+          label="Pronostics"
+          value="12"
+          subtitle="Disponibles"
+          icon="📊"
+        />
+        <StatWidget
+          label="Win rate"
+          value="68%"
+          trend="up"
+          subtitle="30 derniers jours"
+          icon="📈"
+        />
+      </div>
+    </div>
+  </section>
 
-        <div class="space-y-6">
-          <!-- Colors -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Couleurs</h3>
-            <div class="grid grid-cols-4 gap-4">
-              <div>
-                <div class="h-12 rounded bg-primary"></div>
-                <p class="text-sm mt-1">Primary</p>
-              </div>
-              <div>
-                <div class="h-12 rounded bg-secondary"></div>
-                <p class="text-sm mt-1">Secondary</p>
-              </div>
-              <div>
-                <div class="h-12 rounded bg-success"></div>
-                <p class="text-sm mt-1">Success</p>
-              </div>
-              <div>
-                <div class="h-12 rounded bg-error"></div>
-                <p class="text-sm mt-1">Error</p>
-              </div>
+  <!-- Scores du jour -->
+  <section class="section">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Scores du jour</h2>
+        <Button variant="ghost" size="sm" href="/scores/">
+          Voir tous les matchs →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {todayGames.map((game) => (
+          <GameCard {...game} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Pronostics du jour -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Pronostics du jour</h2>
+        <Button variant="ghost" size="sm" href="/pronostics/">
+          Tous les pronostics →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card variant="elevated" padding="lg">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="font-bold text-xl mb-2">Yankees vs Dodgers</h3>
+              <p class="text-sm text-text-muted">MLB • Aujourd'hui 20:05</p>
+            </div>
+            <span class="bg-success-bg text-success px-3 py-1 rounded-full text-xs font-semibold">
+              CONFIANCE ÉLEVÉE
+            </span>
+          </div>
+          <p class="text-text-secondary mb-4 line-clamp-2">
+            Les Dodgers, portés par la forme olympique de Shohei Ohtani, partent favoris face à des Yankees affaiblis par les blessures.
+          </p>
+          <div class="flex gap-4 mb-4">
+            <div class="flex-1 text-center p-3 bg-bg rounded">
+              <div class="text-xs text-text-muted mb-1">COTE</div>
+              <div class="text-2xl font-bold">1.85</div>
+            </div>
+            <div class="flex-1 text-center p-3 bg-bg rounded">
+              <div class="text-xs text-text-muted mb-1">MISE</div>
+              <div class="text-2xl font-bold">3u</div>
             </div>
           </div>
+          <Button variant="primary" size="md" href="/pronostics/mlb/2026-04-15-yankees-vs-dodgers/" class="w-full">
+            Voir le pronostic complet
+          </Button>
+        </Card>
 
-          <!-- Typography -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Typographie</h3>
-            <h1 class="text-4xl font-bold">H1 - Heading 4xl</h1>
-            <h2 class="text-3xl font-bold">H2 - Heading 3xl</h2>
-            <h3 class="text-2xl font-bold">H3 - Heading 2xl</h3>
-            <p class="text-base">Paragraphe standard (16px base)</p>
-            <p class="text-sm text-muted">Texte secondaire (14px muted)</p>
+        <Card variant="elevated" padding="lg">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="font-bold text-xl mb-2">Bears vs Twins</h3>
+              <p class="text-sm text-text-muted">KBO • Aujourd'hui 18:30</p>
+            </div>
+            <span class="bg-warning-bg text-warning px-3 py-1 rounded-full text-xs font-semibold">
+              VALEUR
+            </span>
           </div>
-
-          <!-- Buttons -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Boutons (Composant)</h3>
-            <div class="flex flex-wrap gap-4">
-              <Button variant="primary" size="md">Primary</Button>
-              <Button variant="secondary" size="md">Secondary</Button>
-              <Button variant="ghost" size="md">Ghost</Button>
-              <Button variant="link" size="md">Link</Button>
-              <Button variant="primary" size="sm">Small</Button>
-              <Button variant="primary" size="lg">Large</Button>
-              <Button variant="primary" disabled>Disabled</Button>
+          <p class="text-text-secondary mb-4 line-clamp-2">
+            Les Doosan Bears enchaînent les victoires. Sur une série de 5 matchs gagnés, ils sont clairement supérieurs.
+          </p>
+          <div class="flex gap-4 mb-4">
+            <div class="flex-1 text-center p-3 bg-bg rounded">
+              <div class="text-xs text-text-muted mb-1">COTE</div>
+              <div class="text-2xl font-bold">2.10</div>
+            </div>
+            <div class="flex-1 text-center p-3 bg-bg rounded">
+              <div class="text-xs text-text-muted mb-1">MISE</div>
+              <div class="text-2xl font-bold">2u</div>
             </div>
           </div>
+          <Button variant="primary" size="md" href="/pronostics/kbo/2026-04-15-bears-vs-twins/" class="w-full">
+            Voir le pronostic complet
+          </Button>
+        </Card>
+      </div>
 
-          <!-- Badges -->
+      <!-- CTA Affiliation -->
+      <div class="mt-8 p-6 bg-primary/10 border border-primary/20 rounded-lg">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h3 class="text-xl font-semibold mb-3">Badges (Composant)</h3>
-            <div class="flex flex-wrap gap-3">
-              <Badge status="live" size="md">EN DIRECT</Badge>
-              <Badge status="finished" size="md">TERMINÉ</Badge>
-              <Badge status="postponed" size="md">REPORTÉ</Badge>
-              <Badge status="scheduled" size="md">PROGRAMMÉ</Badge>
-              <Badge status="live" size="sm">LIVE SM</Badge>
-              <Badge status="finished" size="sm">FT SM</Badge>
-            </div>
+            <h3 class="font-bold text-lg mb-2">Pariez sur nos pronostics</h3>
+            <p class="text-sm text-text-muted">
+              Bonus de bienvenue jusqu'à 100€ offerts sur Betclic
+            </p>
           </div>
-
-          <!-- Cards -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Cards (Composant)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card variant="default" padding="md">
-                <h4 class="font-bold mb-2">Default</h4>
-                <p class="text-sm text-muted">Surface background sans shadow</p>
-              </Card>
-              <Card variant="bordered" padding="md">
-                <h4 class="font-bold mb-2">Bordered</h4>
-                <p class="text-sm text-muted">Avec bordure</p>
-              </Card>
-              <Card variant="elevated" padding="md">
-                <h4 class="font-bold mb-2">Elevated</h4>
-                <p class="text-sm text-muted">Avec shadow (hover pour effet)</p>
-              </Card>
-            </div>
-          </div>
-
-          <!-- Score Board -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Score Board (CSS Classes)</h3>
-            <Card variant="bordered" padding="lg">
-              <div class="score-board">
-                <div class="score-board-team">Yankees</div>
-                <div class="score-board-score">
-                  <span>5</span>
-                  <span class="text-muted mx-2">-</span>
-                  <span>3</span>
-                </div>
-                <div class="score-board-team">Red Sox</div>
-              </div>
-            </Card>
-          </div>
-
-          <!-- Dark Mode Toggle -->
-          <div>
-            <h3 class="text-xl font-semibold mb-3">Dark Mode</h3>
-            <button
-              id="theme-toggle"
-              class="btn btn-ghost"
-            >
-              <span id="theme-icon">🌙</span>
-              <span class="ml-2">Toggle Dark Mode</span>
-            </button>
-          </div>
+          <Button variant="primary" size="lg" href="/paris-sportifs/betclic/">
+            Profiter de l'offre →
+          </Button>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <footer class="text-center text-muted text-sm">
-        <p>Design system test - Tokens CSS + Tailwind hybrid</p>
-      </footer>
-    </main>
-  </div>
+  <!-- Top Joueurs -->
+  <section class="section">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Top joueurs de la semaine</h2>
+        <Button variant="ghost" size="sm" href="/joueurs/">
+          Tous les joueurs →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {topPlayers.map((player) => (
+          <PlayerCard {...player} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- News récentes -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Dernières actualités</h2>
+        <Button variant="ghost" size="sm" href="/news/">
+          Toutes les news →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {recentNews.map((article) => (
+          <Card variant="bordered" padding="md" class="hover:shadow-lg transition-shadow">
+            <div class="mb-3">
+              <span class="text-xs font-semibold text-primary uppercase tracking-wide">
+                {article.category}
+              </span>
+              <span class="text-xs text-text-muted ml-2">
+                {new Date(article.date).toLocaleDateString('fr-FR')}
+              </span>
+            </div>
+            <h3 class="font-bold text-lg mb-2 line-clamp-2">
+              {article.title}
+            </h3>
+            <p class="text-sm text-text-muted mb-4 line-clamp-3">
+              {article.excerpt}
+            </p>
+            <Button variant="link" size="sm" href={`/news/${article.slug}/`}>
+              Lire la suite →
+            </Button>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="py-16 bg-primary text-white">
+    <div class="container mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-4">
+        Prêt à suivre le baseball comme un pro ?
+      </h2>
+      <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+        Inscrivez-vous pour recevoir nos pronostics quotidiens et analyses exclusives directement par email.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <input
+          type="email"
+          placeholder="votre@email.fr"
+          class="px-6 py-3 rounded-md text-text w-full sm:w-96 focus-ring"
+        />
+        <Button variant="secondary" size="lg">
+          S'inscrire gratuitement
+        </Button>
+      </div>
+      <p class="text-sm text-blue-100 mt-4">
+        Pas de spam, désabonnement en un clic.
+      </p>
+    </div>
+  </section>
 </BaseLayout>
-
-<script>
-  // Dark mode toggle
-  const toggle = document.getElementById('theme-toggle');
-  const icon = document.getElementById('theme-icon');
-
-  if (toggle && icon) {
-    toggle.addEventListener('click', () => {
-      const html = document.documentElement;
-      const current = html.dataset.theme;
-      const next = current === 'dark' ? 'light' : 'dark';
-
-      html.dataset.theme = next;
-      localStorage.setItem('theme', next);
-
-      icon.textContent = next === 'dark' ? '☀️' : '🌙';
-    });
-
-    // Set initial icon
-    const current = document.documentElement.dataset.theme;
-    icon.textContent = current === 'dark' ? '☀️' : '🌙';
-  }
-</script>
