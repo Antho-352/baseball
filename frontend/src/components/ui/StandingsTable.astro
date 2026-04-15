@@ -1,32 +1,8 @@
 ---
 /**
- * StandingsTable Component
+ * StandingsTable Component - Design System compliant
  *
- * Tableau de classement d'une ligue
- *
- * Props:
- * - standings: Array des équipes avec stats
- * - showGB?: Afficher la colonne Games Behind (défaut: true)
- * - highlightTop?: Nombre d'équipes à mettre en avant (défaut: 3)
- *
- * Standing shape:
- * {
- *   rank: number;
- *   teamName: string;
- *   teamLogo?: string;
- *   wins: number;
- *   losses: number;
- *   pct: number;  // Pourcentage de victoires (0.xxx)
- *   gb: number;   // Games Behind
- *   streak?: string; // Ex: "W5", "L2"
- * }
- *
- * Usage:
- * <StandingsTable
- *   standings={mlbStandings}
- *   showGB={true}
- *   highlightTop={3}
- * />
+ * Tableau de classement suivant les specs du DESIGN-SYSTEM.md
  */
 
 interface Standing {
@@ -42,6 +18,8 @@ interface Standing {
 
 interface Props {
   standings: Standing[];
+  league?: string;
+  division?: string;
   showGB?: boolean;
   highlightTop?: number;
   class?: string;
@@ -49,112 +27,261 @@ interface Props {
 
 const {
   standings,
+  league = 'MLB',
+  division,
   showGB = true,
   highlightTop = 3,
   class: className = '',
 } = Astro.props;
 
-// Formatter le pourcentage
+// Format percentage
 const formatPct = (pct: number) => pct.toFixed(3);
 
-// Formatter GB (Games Behind)
+// Format GB
 const formatGB = (gb: number) => {
   if (gb === 0) return '—';
   return gb.toFixed(1);
 };
+
+// League colors
+const leagueColors: Record<string, string> = {
+  'MLB': '#e8102e',
+  'KBO': '#0052a5',
+  'NPB': '#e67e00',
+};
 ---
 
-<div class={`overflow-x-auto ${className}`}>
-  <table class="w-full border-collapse">
-    <thead>
-      <tr class="bg-bg-surface border-b-2 border-border">
-        <th class="text-left py-3 px-4 font-semibold text-sm">Rang</th>
-        <th class="text-left py-3 px-4 font-semibold text-sm">Équipe</th>
-        <th class="text-center py-3 px-4 font-semibold text-sm">V</th>
-        <th class="text-center py-3 px-4 font-semibold text-sm">D</th>
-        <th class="text-center py-3 px-4 font-semibold text-sm">%</th>
-        {showGB && (
-          <th class="text-center py-3 px-4 font-semibold text-sm">GB</th>
-        )}
-        <th class="text-center py-3 px-4 font-semibold text-sm">Série</th>
-      </tr>
-    </thead>
-    <tbody>
-      {standings.map((team) => {
-        const isHighlighted = team.rank <= highlightTop;
-        return (
-          <tr
-            class={`border-b border-border transition-colors hover:bg-bg-surface ${
-              isHighlighted ? 'bg-success-bg/10' : ''
-            }`}
-          >
-            <!-- Rank -->
-            <td class="py-3 px-4 text-center">
-              <span class={`font-bold ${isHighlighted ? 'text-success' : ''}`}>
-                {team.rank}
-              </span>
-            </td>
+<div class={`standings-block ${className}`}>
+  <!-- Header -->
+  {(league || division) && (
+    <div class="standings-block-header">
+      {league && (
+        <span class="league-badge" style={`background: ${leagueColors[league]}`}>
+          {league}
+        </span>
+      )}
+      {division && (
+        <span class="standings-division">{division}</span>
+      )}
+    </div>
+  )}
 
-            <!-- Team name + logo -->
-            <td class="py-3 px-4">
-              <div class="flex items-center gap-3">
-                {team.teamLogo && (
-                  <img
-                    src={team.teamLogo}
-                    alt={team.teamName}
-                    class="w-6 h-6 object-contain"
-                  />
-                )}
-                <span class="font-medium">
-                  {team.teamName}
+  <!-- Table -->
+  <div class="standings-table-wrap">
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>Équipe</th>
+          <th>V</th>
+          <th>D</th>
+          <th>%</th>
+          {showGB && <th>GB</th>}
+        </tr>
+      </thead>
+      <tbody>
+        {standings.map((team) => {
+          const isHighlighted = team.rank <= highlightTop;
+          const teamAbbrev = team.teamName.substring(0, 3).toUpperCase();
+
+          return (
+            <tr>
+              <td>
+                <span class="st-rank">{team.rank}</span>
+                <span class="st-team-logo" style={`background: ${leagueColors[league]}`}>
+                  {teamAbbrev}
                 </span>
-              </div>
-            </td>
-
-            <!-- Wins -->
-            <td class="py-3 px-4 text-center font-semibold tabular-nums">
-              {team.wins}
-            </td>
-
-            <!-- Losses -->
-            <td class="py-3 px-4 text-center tabular-nums">
-              {team.losses}
-            </td>
-
-            <!-- Percentage -->
-            <td class="py-3 px-4 text-center font-semibold tabular-nums">
-              {formatPct(team.pct)}
-            </td>
-
-            <!-- Games Behind -->
-            {showGB && (
-              <td class="py-3 px-4 text-center tabular-nums text-text-muted">
-                {formatGB(team.gb)}
+                <span class="st-team">{team.teamName}</span>
               </td>
-            )}
+              <td class="st-w">{team.wins}</td>
+              <td>{team.losses}</td>
+              <td class="st-pct">{formatPct(team.pct)}</td>
+              {showGB && <td class="st-gb">{formatGB(team.gb)}</td>}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
 
-            <!-- Streak -->
-            <td class="py-3 px-4 text-center">
-              {team.streak && (
-                <span
-                  class={`text-xs font-semibold ${
-                    team.streak.startsWith('W') ? 'text-success' : 'text-error'
-                  }`}
-                >
-                  {team.streak}
-                </span>
-              )}
-            </td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
+  <!-- Footer link (optional) -->
+  <div class="standings-footer">
+    <a href={`/${league.toLowerCase()}/classement/`}>
+      Classement complet →
+    </a>
+  </div>
 </div>
 
 <style>
-  /* Zebra striping pour meilleure lisibilité */
-  tbody tr:nth-child(even):not(:hover) {
-    background-color: rgba(var(--color-surface), 0.3);
+  .standings-block {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .standings-block-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background-color: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .league-badge {
+    padding: var(--space-1) var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-full);
+    color: white;
+  }
+
+  .standings-division {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+  }
+
+  /* Table */
+  .standings-table-wrap {
+    overflow-x: auto;
+  }
+
+  .standings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .standings-table thead tr {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .standings-table th {
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    text-align: left;
+  }
+
+  .standings-table th:not(:first-child) {
+    text-align: center;
+  }
+
+  .standings-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-base);
+  }
+
+  .standings-table tbody tr:hover {
+    background-color: var(--color-surface-2);
+  }
+
+  .standings-table td {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+  }
+
+  .standings-table td:not(:first-child) {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Team cell */
+  .standings-table td:first-child {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .st-rank {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    min-width: 16px;
+  }
+
+  .st-team-logo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .st-team {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* Stats columns */
+  .st-w {
+    color: var(--color-green);
+    font-weight: 600;
+  }
+
+  .st-pct {
+    font-weight: var(--font-semibold);
+  }
+
+  .st-gb {
+    color: var(--color-text-muted);
+  }
+
+  /* Footer */
+  .standings-footer {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .standings-footer a {
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .standings-footer a:hover {
+    color: var(--color-red);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .standings-table th,
+    .standings-table td {
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--text-xs);
+    }
+
+    .st-team-logo {
+      width: 16px;
+      height: 16px;
+      font-size: 0.5rem;
+    }
   }
 </style>

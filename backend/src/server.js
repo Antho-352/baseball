@@ -11,7 +11,7 @@
 import express from 'express';
 import cors from 'cors';
 import NodeCache from 'node-cache';
-import { createDataProvider } from './services/data-provider/index.js';
+import { createDataProvider } from './services/data-provider/index.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3210;

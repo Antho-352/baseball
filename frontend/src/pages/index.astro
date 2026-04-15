@@ -11,13 +11,59 @@
  */
 
 import BaseLayout from '@layouts/BaseLayout.astro';
+import Ticker from '@components/ui/Ticker.astro';
+import Hero from '@components/ui/Hero.astro';
 import GameCard from '@components/ui/GameCard.astro';
 import PlayerCard from '@components/ui/PlayerCard.astro';
+import NewsGrid from '@components/ui/NewsGrid.astro';
+import BettingStrip from '@components/ui/BettingStrip.astro';
+import StandingsTable from '@components/ui/StandingsTable.astro';
 import Button from '@components/ui/Button.astro';
 import Card from '@components/ui/Card.astro';
 import StatWidget from '@components/ui/StatWidget.astro';
 
 // Mock data (sera remplacé par API calls)
+
+// Ticker items for live scores bar
+const tickerItems = [
+  {
+    id: 'mlb-1',
+    league: 'mlb' as const,
+    homeTeam: 'Dodgers',
+    awayTeam: 'Yankees',
+    homeScore: 5,
+    awayScore: 3,
+    inning: 'T7',
+    status: 'live' as const,
+  },
+  {
+    id: 'kbo-1',
+    league: 'kbo' as const,
+    homeTeam: 'Bears',
+    awayTeam: 'Twins',
+    homeScore: 7,
+    awayScore: 4,
+    status: 'final' as const,
+  },
+  {
+    id: 'npb-1',
+    league: 'npb' as const,
+    homeTeam: 'Giants',
+    awayTeam: 'Tigers',
+    homeScore: 2,
+    awayScore: 1,
+    inning: 'B4',
+    status: 'live' as const,
+  },
+  {
+    id: 'mlb-2',
+    league: 'mlb' as const,
+    homeTeam: 'Red Sox',
+    awayTeam: 'Blue Jays',
+    status: 'scheduled' as const,
+  },
+];
+
 const todayGames = [
   {
     homeTeam: 'Los Angeles Dodgers',
@@ -89,25 +135,61 @@ const topPlayers = [
 
 const recentNews = [
   {
+    id: '1',
     title: 'Shohei Ohtani signe le plus gros contrat de l\'histoire',
-    excerpt: 'Le joueur japonais rejoint les Dodgers pour 700 millions de dollars sur 10 ans...',
-    date: '2026-04-14',
+    excerpt: 'Le joueur japonais rejoint les Dodgers pour 700 millions de dollars sur 10 ans, un record absolu dans le sport professionnel.',
+    image: '/images/news/ohtani-dodgers.jpg',
     category: 'Transferts',
+    league: 'mlb' as const,
+    publishedAt: '2026-04-14',
     slug: 'ohtani-dodgers-700m',
+    isFeatured: true,
   },
   {
+    id: '2',
     title: 'World Series 2026 : Les favoris selon les bookmakers',
-    excerpt: 'Les Dodgers et les Yankees dominent les cotes pour remporter les World Series...',
-    date: '2026-04-13',
+    excerpt: 'Les Dodgers et les Yankees dominent les cotes pour remporter les World Series. Analyse des forces en présence.',
     category: 'Pronostics',
+    league: 'mlb' as const,
+    publishedAt: '2026-04-13',
     slug: 'world-series-2026-favoris',
   },
   {
+    id: '3',
     title: 'KBO : Les Bears enchaînent une 5e victoire consécutive',
-    excerpt: 'Doosan confirme sa forme olympique avec une nouvelle victoire face aux Twins...',
-    date: '2026-04-12',
-    category: 'KBO',
+    excerpt: 'Doosan confirme sa forme olympique avec une nouvelle victoire face aux Twins. La série continue.',
+    category: 'News',
+    league: 'kbo' as const,
+    publishedAt: '2026-04-12',
     slug: 'kbo-bears-5-victoires',
+  },
+  {
+    id: '4',
+    title: 'Aaron Judge bat un nouveau record personnel',
+    excerpt: 'Le capitaine des Yankees frappe son 58e home run de la saison, établissant un nouveau record de carrière.',
+    category: 'Stats',
+    league: 'mlb' as const,
+    publishedAt: '2026-04-11',
+    slug: 'aaron-judge-58-hr',
+  },
+];
+
+// Bookmakers ANJ (pour BettingStrip)
+const anjBookmakers = [
+  {
+    name: 'Betclic',
+    affiliateUrl: '/paris-sportifs/betclic/',
+    bonus: 'Jusqu\'à 100€ offerts',
+  },
+  {
+    name: 'Unibet',
+    affiliateUrl: '/paris-sportifs/unibet/',
+    bonus: '50€ de bonus',
+  },
+  {
+    name: 'Winamax',
+    affiliateUrl: '/paris-sportifs/winamax/',
+    bonus: '100€ de paris gratuits',
   },
 ];
 ---
@@ -116,31 +198,27 @@ const recentNews = [
   title="home-run.fr - Baseball MLB, KBO, NPB : Scores, Stats et Pronostics"
   description="Suivez les scores en direct, statistiques et pronostics pour la MLB, KBO et NPB. Votre référence baseball en français."
 >
+  <!-- Ticker - Live scores bar -->
+  <Ticker items={tickerItems} speed="medium" />
+
   <!-- Hero Section -->
-  <section class="bg-primary text-white py-16">
-    <div class="container mx-auto text-center">
-      <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
-        ⚾ Baseball Live
-      </h1>
-      <p class="text-xl md:text-2xl text-blue-100 mb-8">
-        Scores en direct, stats complètes et pronostics pour MLB, KBO et NPB
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <Button variant="secondary" size="lg" href="/mlb/">
-          MLB
-        </Button>
-        <Button variant="secondary" size="lg" href="/kbo/">
-          KBO
-        </Button>
-        <Button variant="secondary" size="lg" href="/npb/">
-          NPB
-        </Button>
-        <Button variant="ghost" size="lg" href="/pronostics/" class="!text-white !border-white hover:!bg-white/10">
-          Pronostics
-        </Button>
-      </div>
-    </div>
-  </section>
+  <Hero
+    title="Scores, Stats & Pronostics Baseball"
+    subtitle="MLB • KBO • NPB"
+    ctaText="Voir les pronostics du jour"
+    ctaHref="/pronostics/"
+    league="mlb"
+    featuredGame={{
+      id: todayGames[0].gameId,
+      league: 'mlb',
+      homeTeam: todayGames[0].homeTeam,
+      awayTeam: todayGames[0].awayTeam,
+      homeScore: todayGames[0].homeScore,
+      awayScore: todayGames[0].awayScore,
+      status: todayGames[0].status,
+      startTime: todayGames[0].startTime.toISOString(),
+    }}
+  />
 
   <!-- Stats Overview -->
   <section class="py-12 bg-bg-surface border-b border-border">
@@ -296,40 +374,10 @@ const recentNews = [
   </section>
 
   <!-- News récentes -->
-  <section class="section bg-bg-surface">
-    <div class="container mx-auto">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold">Dernières actualités</h2>
-        <Button variant="ghost" size="sm" href="/news/">
-          Toutes les news →
-        </Button>
-      </div>
+  <NewsGrid articles={recentNews} showFeatured={true} />
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {recentNews.map((article) => (
-          <Card variant="bordered" padding="md" class="hover:shadow-lg transition-shadow">
-            <div class="mb-3">
-              <span class="text-xs font-semibold text-primary uppercase tracking-wide">
-                {article.category}
-              </span>
-              <span class="text-xs text-text-muted ml-2">
-                {new Date(article.date).toLocaleDateString('fr-FR')}
-              </span>
-            </div>
-            <h3 class="font-bold text-lg mb-2 line-clamp-2">
-              {article.title}
-            </h3>
-            <p class="text-sm text-text-muted mb-4 line-clamp-3">
-              {article.excerpt}
-            </p>
-            <Button variant="link" size="sm" href={`/news/${article.slug}/`}>
-              Lire la suite →
-            </Button>
-          </Card>
-        ))}
-      </div>
-    </div>
-  </section>
+  <!-- Betting Strip with ANJ compliance -->
+  <BettingStrip bookmakers={anjBookmakers} variant="horizontal" />
 
   <!-- CTA Final -->
   <section class="py-16 bg-primary text-white">

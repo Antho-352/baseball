@@ -17,12 +17,40 @@ interface Props {
 
 const { currentPath } = Astro.props;
 
-// Navigation items
+// Navigation items with dropdowns
 const navItems = [
   { name: 'Accueil', href: '/' },
-  { name: 'MLB', href: '/mlb/' },
-  { name: 'KBO', href: '/kbo/' },
-  { name: 'NPB', href: '/npb/' },
+  {
+    name: 'MLB',
+    href: '/mlb/',
+    dropdown: [
+      { name: 'Scores', href: '/mlb/scores/' },
+      { name: 'Classement', href: '/mlb/classement/' },
+      { name: 'Équipes', href: '/mlb/equipes/' },
+      { name: 'Joueurs', href: '/mlb/joueurs/' },
+      { name: 'Stats', href: '/mlb/stats/' },
+    ]
+  },
+  {
+    name: 'KBO',
+    href: '/kbo/',
+    dropdown: [
+      { name: 'Scores', href: '/kbo/scores/' },
+      { name: 'Classement', href: '/kbo/classement/' },
+      { name: 'Équipes', href: '/kbo/equipes/' },
+      { name: 'Joueurs', href: '/kbo/joueurs/' },
+    ]
+  },
+  {
+    name: 'NPB',
+    href: '/npb/',
+    dropdown: [
+      { name: 'Scores', href: '/npb/scores/' },
+      { name: 'Classement', href: '/npb/classement/' },
+      { name: 'Équipes', href: '/npb/equipes/' },
+      { name: 'Joueurs', href: '/npb/joueurs/' },
+    ]
+  },
   { name: 'Pronostics', href: '/pronostics/' },
   { name: 'News', href: '/news/' },
 ];
@@ -36,37 +64,57 @@ const isActive = (href: string) => {
 };
 ---
 
-<nav class="sticky top-0 z-sticky bg-bg border-b border-border">
-  <div class="container mx-auto">
-    <div class="flex items-center justify-between h-16">
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 font-bold text-xl">
-        <span class="text-2xl">⚾</span>
-        <span>home-run.fr</span>
+      <a href="/" class="navbar-logo">
+        <span class="logo-icon">⚾</span>
+        <span class="logo-text">home-run.fr</span>
       </a>
 
       <!-- Desktop nav -->
-      <div class="hidden md:flex items-center gap-6">
+      <div class="navbar-menu">
         {navItems.map((item) => (
-          <a
-            href={item.href}
-            class={`font-medium transition-colors ${
-              isActive(item.href)
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-text hover:text-primary'
-            }`}
-          >
-            {item.name}
-          </a>
+          <div class="navbar-item">
+            <a
+              href={item.href}
+              class={`navbar-link ${isActive(item.href) ? 'navbar-link--active' : ''}`}
+            >
+              {item.name}
+              {item.dropdown && (
+                <svg
+                  class="navbar-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              )}
+            </a>
+
+            {item.dropdown && (
+              <div class="navbar-dropdown">
+                {item.dropdown.map((subItem) => (
+                  <a href={subItem.href} class="navbar-dropdown-item">
+                    {subItem.name}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
 
         <!-- Dark mode toggle -->
         <button
           id="nav-theme-toggle"
-          class="p-2 rounded-md hover:bg-bg-surface transition-colors"
+          class="navbar-theme-toggle"
           aria-label="Toggle dark mode"
         >
-          <span id="nav-theme-icon" class="text-xl">🌙</span>
+          <span id="nav-theme-icon">🌙</span>
         </button>
       </div>
 
@@ -104,6 +152,185 @@ const isActive = (href: string) => {
     </div>
   </div>
 </nav>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background-color: var(--color-bg);
+    backdrop-filter: blur(var(--blur-lg));
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @supports (backdrop-filter: blur(12px)) {
+    .navbar {
+      background-color: rgba(var(--color-bg-rgb, 255, 255, 255), var(--backdrop-opacity));
+    }
+
+    [data-theme="dark"] .navbar {
+      background-color: rgba(8, 13, 20, 0.8);
+    }
+  }
+
+  .navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-extrabold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .navbar-logo:hover {
+    color: var(--color-primary);
+  }
+
+  .logo-icon {
+    font-size: var(--text-2xl);
+  }
+
+  .navbar-menu {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 768px) {
+    .navbar-menu {
+      display: flex;
+    }
+  }
+
+  .navbar-item {
+    position: relative;
+  }
+
+  .navbar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+
+  .navbar-link:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface);
+  }
+
+  .navbar-link--active {
+    color: var(--color-primary);
+    background-color: var(--color-surface);
+  }
+
+  .navbar-chevron {
+    width: 14px;
+    height: 14px;
+    transition: transform var(--transition-base);
+  }
+
+  .navbar-item:hover .navbar-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown menu */
+  .navbar-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    margin-top: var(--space-2);
+    padding: var(--space-2);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all var(--transition-base);
+    backdrop-filter: blur(var(--blur-lg));
+  }
+
+  .navbar-item:hover .navbar-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .navbar-dropdown-item {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .navbar-dropdown-item:hover {
+    color: var(--color-primary);
+    background-color: var(--color-bg);
+  }
+
+  .navbar-theme-toggle {
+    padding: var(--space-2);
+    font-size: var(--text-xl);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+  }
+
+  .navbar-theme-toggle:hover {
+    background-color: var(--color-surface);
+  }
+
+  /* Mobile menu button */
+  .mobile-menu-toggle {
+    display: block;
+    padding: var(--space-2);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+  }
+
+  @media (min-width: 768px) {
+    .mobile-menu-toggle {
+      display: none;
+    }
+  }
+
+  .mobile-menu-toggle:hover {
+    background-color: var(--color-surface);
+  }
+</style>
 
 <script>
   // Dark mode toggle

@@ -104,7 +104,7 @@ export function resetDefaultProvider(): void {
 }
 
 // Exports des types et interfaces
-export { DataProvider } from './DataProvider.interface';
+export type { DataProvider } from './DataProvider.interface';
 export * from './types';
 export { APISportsProvider } from './api-sports/APISportsProvider';
 export { MLBStatsProvider } from './mlb-stats/MLBStatsProvider';
