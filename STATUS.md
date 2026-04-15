@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 6 complet - Homepage MVP créée, prêt pour Hub ligues
+**Phase** : Step 7 complet - Homepage + 3 Hub ligues créés, site fonctionnel en local
 
 ---
 
@@ -208,7 +208,45 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - ✅ Responsive mobile/tablet/desktop
 - ✅ Affiliation ANJ compliant (warning footer)
 
-### 6. Test Intégration UnifiedProvider
+### 6. ✅ Hub Pages Ligues (2026-04-15)
+
+**Fichiers créés** :
+- `/frontend/src/pages/mlb/index.astro` (Hub MLB)
+- `/frontend/src/pages/kbo/index.astro` (Hub KBO)
+- `/frontend/src/pages/npb/index.astro` (Hub NPB)
+
+**Structure identique** (adaptée par ligue) :
+1. Hero section (gradient couleur ligue + flag)
+2. Quick navigation (6 boutons: Scores, Calendrier, Classement, Équipes, Joueurs, Stats)
+3. Stats overview (4 StatWidgets)
+4. Scores du jour (3 GameCards mock data)
+5. Classement(s) (AL/NL pour MLB, simple pour KBO, Central/Pacific pour NPB)
+6. Stats leaders (2 Cards: batteurs + lanceurs/HR)
+7. News récentes (3 Cards articles)
+8. Info section (Card avec histoire de la ligue)
+
+**Mock data MLB** :
+- 3 matchs (Dodgers vs Yankees live, Red Sox vs Blue Jays final, Giants vs Cubs scheduled)
+- Classement AL top 5 (Yankees #1) + NL top 5 (Dodgers #1)
+- Top batteurs (Ohtani .304, Judge .311, Betts .307)
+- Top lanceurs ERA (Strider 2.14, Cole 2.28, Snell 2.45)
+
+**Mock data KBO** :
+- 3 matchs (Bears vs Twins final, Lions vs Tigers live, Heroes vs Dinos scheduled)
+- Classement 10 équipes (Bears #1, Twins #2)
+- Top batteurs + Top HR
+
+**Mock data NPB** :
+- 3 matchs (Giants vs Tigers final, Hawks vs Buffaloes live, Carp vs Dragons scheduled)
+- Classement Central top 6 (Giants #1) + Pacific top 6 (Hawks #1)
+- Top batteurs + Top HR
+
+**Cohérence design** :
+- Même structure = facilite maintenance
+- Couleurs hero différentes (MLB bleu, KBO rouge, NPB violet)
+- Mock data réaliste (noms vrais joueurs/équipes)
+
+### 7. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
@@ -226,13 +264,12 @@ mysql -u root -p baseball_fr < docs/schema.sql
 
 ## 📋 Prochaines Étapes (Ordre)
 
-1. **Step 4-6** : ✅ Design System + 10 composants UI + Homepage MVP
-2. **Step 7** : Pages Hub ligues (/mlb/, /kbo/, /npb/) (en cours)
-3. **Step 8** : Pages Match + Player + Standings
-4. **Step 9** : Backend API (Node + Express)
-5. **Step 10** : CMS admin (TipTap éditeur)
-6. **Step 11** : Cron jobs sync données
-7. **V1.5** : Activer ScraperService (sélecteurs validés)
+1. **Step 4-7** : ✅ Design System + 10 composants UI + Homepage + 3 Hub ligues
+2. **Step 8** : Backend API (Node + Express + UnifiedProvider integration)
+3. **Step 9** : Pages détails (Match, Player, Standings full)
+4. **Step 10** : CMS admin (TipTap éditeur)
+5. **Step 11** : Cron jobs sync données
+6. **V1.5** : Activer ScraperService (sélecteurs validés)
 
 ---
 

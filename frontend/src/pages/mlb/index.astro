@@ -1,0 +1,315 @@
+---
+/**
+ * Hub MLB - Page principale de la ligue MLB
+ *
+ * Sections:
+ * - Hero MLB avec navigation rapide
+ * - Scores du jour
+ * - Classement AL + NL (top 5)
+ * - Stats leaders (batteurs + lanceurs)
+ * - News MLB récentes
+ */
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import GameCard from '@components/ui/GameCard.astro';
+import StandingsTable from '@components/ui/StandingsTable.astro';
+import StatWidget from '@components/ui/StatWidget.astro';
+import Card from '@components/ui/Card.astro';
+import Button from '@components/ui/Button.astro';
+
+// Mock data - sera remplacé par UnifiedProvider
+const todayGamesMLB = [
+  {
+    homeTeam: 'Los Angeles Dodgers',
+    awayTeam: 'New York Yankees',
+    homeScore: 5,
+    awayScore: 3,
+    status: 'live' as const,
+    startTime: new Date(),
+    gameId: 'mlb-2026-04-15-nyy-lad',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Boston Red Sox',
+    awayTeam: 'Toronto Blue Jays',
+    homeScore: 4,
+    awayScore: 2,
+    status: 'final' as const,
+    startTime: new Date(Date.now() - 7200000),
+    gameId: 'mlb-2026-04-15-tor-bos',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'San Francisco Giants',
+    awayTeam: 'Chicago Cubs',
+    homeScore: null,
+    awayScore: null,
+    status: 'scheduled' as const,
+    startTime: new Date(Date.now() + 10800000),
+    gameId: 'mlb-2026-04-15-chc-sf',
+    league: 'MLB',
+  },
+];
+
+const standingsAL = [
+  { rank: 1, teamName: 'New York Yankees', wins: 15, losses: 5, pct: 0.750, gb: 0, streak: 'W3' },
+  { rank: 2, teamName: 'Tampa Bay Rays', wins: 13, losses: 7, pct: 0.650, gb: 2.0, streak: 'W1' },
+  { rank: 3, teamName: 'Toronto Blue Jays', wins: 12, losses: 8, pct: 0.600, gb: 3.0, streak: 'L2' },
+  { rank: 4, teamName: 'Baltimore Orioles', wins: 11, losses: 9, pct: 0.550, gb: 4.0, streak: 'W2' },
+  { rank: 5, teamName: 'Boston Red Sox', wins: 10, losses: 10, pct: 0.500, gb: 5.0, streak: 'L1' },
+];
+
+const standingsNL = [
+  { rank: 1, teamName: 'Los Angeles Dodgers', wins: 16, losses: 4, pct: 0.800, gb: 0, streak: 'W5' },
+  { rank: 2, teamName: 'San Francisco Giants', wins: 14, losses: 6, pct: 0.700, gb: 2.0, streak: 'W2' },
+  { rank: 3, teamName: 'Atlanta Braves', wins: 13, losses: 7, pct: 0.650, gb: 3.0, streak: 'W1' },
+  { rank: 4, teamName: 'Philadelphia Phillies', wins: 11, losses: 9, pct: 0.550, gb: 5.0, streak: 'L1' },
+  { rank: 5, teamName: 'New York Mets', wins: 10, losses: 10, pct: 0.500, gb: 6.0, streak: 'W3' },
+];
+
+const recentNewsMLB = [
+  {
+    title: 'Shohei Ohtani en route vers le MVP 2026',
+    excerpt: 'Avec une moyenne de .304 et 44 home runs, le joueur des Dodgers domine la ligue...',
+    date: '2026-04-14',
+    slug: 'ohtani-mvp-2026',
+  },
+  {
+    title: 'Yankees : Aaron Judge retrouve sa meilleure forme',
+    excerpt: 'Le capitaine des Yankees enchaîne les performances exceptionnelles avec 58 HR...',
+    date: '2026-04-13',
+    slug: 'judge-forme-2026',
+  },
+  {
+    title: 'World Series 2026 : Les Dodgers ultra-favoris',
+    excerpt: 'Après leur recrutement stratosphérique, LA vise un nouveau titre...',
+    date: '2026-04-12',
+    slug: 'world-series-2026-dodgers',
+  },
+];
+---
+
+<BaseLayout
+  title="MLB : Scores en Direct, Classement et Calendrier | home-run.fr"
+  description="Suivez la Major League Baseball en direct : scores live, classement AL/NL, statistiques et actualités MLB en français."
+>
+  <!-- Hero MLB -->
+  <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-12">
+    <div class="container mx-auto">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="text-6xl">🇺🇸</div>
+        <div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
+            MLB - Major League Baseball
+          </h1>
+          <p class="text-xl text-blue-100">
+            Saison 2026 - Scores live, classements et stats
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick nav -->
+      <div class="flex flex-wrap gap-3">
+        <Button variant="secondary" size="sm" href="/mlb/scores/">
+          Scores du jour
+        </Button>
+        <Button variant="ghost" size="sm" href="/mlb/calendrier/" class="!text-white !border-white hover:!bg-white/10">
+          Calendrier
+        </Button>
+        <Button variant="ghost" size="sm" href="/mlb/classement/" class="!text-white !border-white hover:!bg-white/10">
+          Classement complet
+        </Button>
+        <Button variant="ghost" size="sm" href="/mlb/equipes/" class="!text-white !border-white hover:!bg-white/10">
+          Équipes
+        </Button>
+        <Button variant="ghost" size="sm" href="/mlb/joueurs/" class="!text-white !border-white hover:!bg-white/10">
+          Joueurs
+        </Button>
+        <Button variant="ghost" size="sm" href="/mlb/stats/" class="!text-white !border-white hover:!bg-white/10">
+          Statistiques
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats overview -->
+  <section class="py-8 bg-bg-surface border-b border-border">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatWidget
+          label="Matchs aujourd'hui"
+          value="15"
+          icon="⚾"
+        />
+        <StatWidget
+          label="Matchs live"
+          value="2"
+          trend="up"
+          icon="🔴"
+        />
+        <StatWidget
+          label="Home runs (total)"
+          value="1,247"
+          subtitle="Saison 2026"
+          icon="💥"
+        />
+        <StatWidget
+          label="Moyenne globale"
+          value=".265"
+          trend="up"
+          icon="📊"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Scores du jour -->
+  <section class="section">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">Scores du jour</h2>
+        <Button variant="ghost" size="sm" href="/mlb/scores/">
+          Tous les matchs MLB →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {todayGamesMLB.map((game) => (
+          <GameCard {...game} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Classements -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold mb-6">Classements</h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- American League -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">American League</h3>
+            <Button variant="link" size="sm" href="/mlb/classement/?league=al">
+              Voir tout →
+            </Button>
+          </div>
+          <StandingsTable standings={standingsAL} highlightTop={3} />
+        </div>
+
+        <!-- National League -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">National League</h3>
+            <Button variant="link" size="sm" href="/mlb/classement/?league=nl">
+              Voir tout →
+            </Button>
+          </div>
+          <StandingsTable standings={standingsNL} highlightTop={3} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats leaders -->
+  <section class="section">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold mb-6">Leaders statistiques</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Batteurs -->
+        <Card variant="bordered" padding="lg">
+          <h3 class="text-xl font-bold mb-4">🏏 Top batteurs (AVG)</h3>
+          <div class="space-y-3">
+            {[
+              { player: 'Shohei Ohtani', team: 'LAD', stat: '.304' },
+              { player: 'Aaron Judge', team: 'NYY', stat: '.311' },
+              { player: 'Mookie Betts', team: 'LAD', stat: '.307' },
+              { player: 'Juan Soto', team: 'SD', stat: '.298' },
+              { player: 'Ronald Acuña Jr.', team: 'ATL', stat: '.295' },
+            ].map((item, index) => (
+              <div class="flex justify-between items-center py-2 border-b border-border last:border-0">
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-text-muted w-6">{index + 1}</span>
+                  <div>
+                    <div class="font-semibold">{item.player}</div>
+                    <div class="text-xs text-text-muted">{item.team}</div>
+                  </div>
+                </div>
+                <span class="text-2xl font-bold tabular-nums">{item.stat}</span>
+              </div>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" href="/mlb/stats/batteurs/" class="w-full mt-4">
+            Voir toutes les stats →
+          </Button>
+        </Card>
+
+        <!-- Lanceurs -->
+        <Card variant="bordered" padding="lg">
+          <h3 class="text-xl font-bold mb-4">⚡ Top lanceurs (ERA)</h3>
+          <div class="space-y-3">
+            {[
+              { player: 'Spencer Strider', team: 'ATL', stat: '2.14' },
+              { player: 'Gerrit Cole', team: 'NYY', stat: '2.28' },
+              { player: 'Blake Snell', team: 'SD', stat: '2.45' },
+              { player: 'Zac Gallen', team: 'ARI', stat: '2.67' },
+              { player: 'Kevin Gausman', team: 'TOR', stat: '2.89' },
+            ].map((item, index) => (
+              <div class="flex justify-between items-center py-2 border-b border-border last:border-0">
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-text-muted w-6">{index + 1}</span>
+                  <div>
+                    <div class="font-semibold">{item.player}</div>
+                    <div class="text-xs text-text-muted">{item.team}</div>
+                  </div>
+                </div>
+                <span class="text-2xl font-bold tabular-nums">{item.stat}</span>
+              </div>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" href="/mlb/stats/lanceurs/" class="w-full mt-4">
+            Voir toutes les stats →
+          </Button>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- News MLB -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">Actualités MLB</h2>
+        <Button variant="ghost" size="sm" href="/news/mlb/">
+          Toutes les news MLB →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {recentNewsMLB.map((article) => (
+          <Card variant="bordered" padding="md" class="hover:shadow-lg transition-shadow">
+            <div class="mb-3">
+              <span class="text-xs font-semibold text-primary uppercase tracking-wide">
+                MLB
+              </span>
+              <span class="text-xs text-text-muted ml-2">
+                {new Date(article.date).toLocaleDateString('fr-FR')}
+              </span>
+            </div>
+            <h3 class="font-bold text-lg mb-2 line-clamp-2">
+              {article.title}
+            </h3>
+            <p class="text-sm text-text-muted mb-4 line-clamp-3">
+              {article.excerpt}
+            </p>
+            <Button variant="link" size="sm" href={`/news/mlb/${article.slug}/`}>
+              Lire la suite →
+            </Button>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

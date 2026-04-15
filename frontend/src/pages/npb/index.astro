@@ -1,0 +1,336 @@
+---
+/**
+ * Hub NPB - Page principale de la ligue NPB (Japon)
+ *
+ * Sections:
+ * - Hero NPB avec navigation rapide
+ * - Scores du jour
+ * - Classement Central + Pacific (top 6)
+ * - Stats leaders
+ * - News NPB récentes
+ */
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import GameCard from '@components/ui/GameCard.astro';
+import StandingsTable from '@components/ui/StandingsTable.astro';
+import StatWidget from '@components/ui/StatWidget.astro';
+import Card from '@components/ui/Card.astro';
+import Button from '@components/ui/Button.astro';
+
+// Mock data - sera remplacé par TheSportsDBProvider
+const todayGamesNPB = [
+  {
+    homeTeam: 'Yomiuri Giants',
+    awayTeam: 'Hanshin Tigers',
+    homeScore: 4,
+    awayScore: 3,
+    status: 'final' as const,
+    startTime: new Date(Date.now() - 10800000),
+    gameId: 'npb-2026-04-15-han-yom',
+    league: 'NPB',
+  },
+  {
+    homeTeam: 'Fukuoka SoftBank Hawks',
+    awayTeam: 'Orix Buffaloes',
+    homeScore: 2,
+    awayScore: 1,
+    status: 'live' as const,
+    startTime: new Date(Date.now() - 3600000),
+    gameId: 'npb-2026-04-15-ori-fuk',
+    league: 'NPB',
+  },
+  {
+    homeTeam: 'Hiroshima Toyo Carp',
+    awayTeam: 'Chunichi Dragons',
+    homeScore: null,
+    awayScore: null,
+    status: 'scheduled' as const,
+    startTime: new Date(Date.now() + 5400000),
+    gameId: 'npb-2026-04-15-chu-hir',
+    league: 'NPB',
+  },
+];
+
+const standingsCentral = [
+  { rank: 1, teamName: 'Yomiuri Giants', wins: 16, losses: 6, pct: 0.727, gb: 0, streak: 'W4' },
+  { rank: 2, teamName: 'Hanshin Tigers', wins: 14, losses: 8, pct: 0.636, gb: 2.0, streak: 'L1' },
+  { rank: 3, teamName: 'Hiroshima Toyo Carp', wins: 13, losses: 9, pct: 0.591, gb: 3.0, streak: 'W2' },
+  { rank: 4, teamName: 'Tokyo Yakult Swallows', wins: 11, losses: 11, pct: 0.500, gb: 5.0, streak: 'W1' },
+  { rank: 5, teamName: 'Chunichi Dragons', wins: 9, losses: 13, pct: 0.409, gb: 7.0, streak: 'L3' },
+  { rank: 6, teamName: 'Yokohama DeNA BayStars', wins: 7, losses: 15, pct: 0.318, gb: 9.0, streak: 'L2' },
+];
+
+const standingsPacific = [
+  { rank: 1, teamName: 'Fukuoka SoftBank Hawks', wins: 17, losses: 5, pct: 0.773, gb: 0, streak: 'W6' },
+  { rank: 2, teamName: 'Orix Buffaloes', wins: 15, losses: 7, pct: 0.682, gb: 2.0, streak: 'W2' },
+  { rank: 3, teamName: 'Chiba Lotte Marines', wins: 12, losses: 10, pct: 0.545, gb: 5.0, streak: 'L1' },
+  { rank: 4, teamName: 'Tohoku Rakuten Eagles', wins: 10, losses: 12, pct: 0.455, gb: 7.0, streak: 'W3' },
+  { rank: 5, teamName: 'Hokkaido Nippon-Ham Fighters', wins: 8, losses: 14, pct: 0.364, gb: 9.0, streak: 'L2' },
+  { rank: 6, teamName: 'Saitama Seibu Lions', wins: 6, losses: 16, pct: 0.273, gb: 11.0, streak: 'L5' },
+];
+
+const recentNewsNPB = [
+  {
+    title: 'NPB : Les Yomiuri Giants dominent la Central League',
+    excerpt: 'Avec une 4e victoire consécutive, les Giants confirment leur statut de favoris...',
+    date: '2026-04-15',
+    slug: 'giants-dominent-central',
+  },
+  {
+    title: 'SoftBank Hawks : Une série de 6 victoires impressionnante',
+    excerpt: 'Les Hawks écrasent la Pacific League avec une attaque dévastatrice...',
+    date: '2026-04-14',
+    slug: 'hawks-6-victoires-suite',
+  },
+  {
+    title: 'Japan Series 2026 : Les premiers pronostics',
+    excerpt: 'Giants vs Hawks, le duel rêvé se dessine pour la finale d\'octobre...',
+    date: '2026-04-13',
+    slug: 'japan-series-2026-pronostics',
+  },
+];
+---
+
+<BaseLayout
+  title="NPB : Scores en Direct, Classement et Calendrier | home-run.fr"
+  description="Suivez le championnat japonais NPB en direct : scores live, classement Central/Pacific, statistiques et actualités baseball japonais en français."
+>
+  <!-- Hero NPB -->
+  <section class="bg-gradient-to-r from-purple-900 to-purple-700 text-white py-12">
+    <div class="container mx-auto">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="text-6xl">🇯🇵</div>
+        <div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
+            NPB - Nippon Professional Baseball
+          </h1>
+          <p class="text-xl text-purple-100">
+            Saison 2026 - Championnat du Japon
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick nav -->
+      <div class="flex flex-wrap gap-3">
+        <Button variant="secondary" size="sm" href="/npb/scores/">
+          Scores du jour
+        </Button>
+        <Button variant="ghost" size="sm" href="/npb/calendrier/" class="!text-white !border-white hover:!bg-white/10">
+          Calendrier
+        </Button>
+        <Button variant="ghost" size="sm" href="/npb/classement/" class="!text-white !border-white hover:!bg-white/10">
+          Classement complet
+        </Button>
+        <Button variant="ghost" size="sm" href="/npb/equipes/" class="!text-white !border-white hover:!bg-white/10">
+          Équipes
+        </Button>
+        <Button variant="ghost" size="sm" href="/npb/joueurs/" class="!text-white !border-white hover:!bg-white/10">
+          Joueurs
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats overview -->
+  <section class="py-8 bg-bg-surface border-b border-border">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatWidget
+          label="Matchs aujourd'hui"
+          value="6"
+          icon="⚾"
+        />
+        <StatWidget
+          label="Matchs live"
+          value="1"
+          icon="🔴"
+        />
+        <StatWidget
+          label="Équipes"
+          value="12"
+          subtitle="6 Central + 6 Pacific"
+          icon="🏟️"
+        />
+        <StatWidget
+          label="Japan Series"
+          value="Oct 2026"
+          subtitle="Finale"
+          icon="🏆"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Scores du jour -->
+  <section class="section">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">Scores du jour</h2>
+        <Button variant="ghost" size="sm" href="/npb/scores/">
+          Tous les matchs NPB →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {todayGamesNPB.map((game) => (
+          <GameCard {...game} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Classements -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold mb-6">Classements NPB 2026</h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Central League -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Central League</h3>
+            <Button variant="link" size="sm" href="/npb/classement/?league=central">
+              Voir tout →
+            </Button>
+          </div>
+          <StandingsTable standings={standingsCentral} highlightTop={3} />
+        </div>
+
+        <!-- Pacific League -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Pacific League</h3>
+            <Button variant="link" size="sm" href="/npb/classement/?league=pacific">
+              Voir tout →
+            </Button>
+          </div>
+          <StandingsTable standings={standingsPacific} highlightTop={3} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats leaders -->
+  <section class="section">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold mb-6">Leaders statistiques NPB</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Batteurs -->
+        <Card variant="bordered" padding="lg">
+          <h3 class="text-xl font-bold mb-4">🏏 Top batteurs (AVG)</h3>
+          <div class="space-y-3">
+            {[
+              { player: 'Munetaka Murakami', team: 'Yakult Swallows', stat: '.342' },
+              { player: 'Yuki Yanagita', team: 'SoftBank Hawks', stat: '.335' },
+              { player: 'Seiya Suzuki', team: 'Hiroshima Carp', stat: '.328' },
+              { player: 'Masataka Yoshida', team: 'Orix Buffaloes', stat: '.319' },
+              { player: 'Hotaka Yamakawa', team: 'Seibu Lions', stat: '.315' },
+            ].map((item, index) => (
+              <div class="flex justify-between items-center py-2 border-b border-border last:border-0">
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-text-muted w-6">{index + 1}</span>
+                  <div>
+                    <div class="font-semibold">{item.player}</div>
+                    <div class="text-xs text-text-muted">{item.team}</div>
+                  </div>
+                </div>
+                <span class="text-2xl font-bold tabular-nums">{item.stat}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <!-- Home runs -->
+        <Card variant="bordered" padding="lg">
+          <h3 class="text-xl font-bold mb-4">💥 Top home runs</h3>
+          <div class="space-y-3">
+            {[
+              { player: 'Munetaka Murakami', team: 'Yakult Swallows', stat: '28' },
+              { player: 'Hotaka Yamakawa', team: 'Seibu Lions', stat: '25' },
+              { player: 'Yuki Yanagita', team: 'SoftBank Hawks', stat: '23' },
+              { player: 'Seiya Suzuki', team: 'Hiroshima Carp', stat: '21' },
+              { player: 'Kazuma Okamoto', team: 'Yomiuri Giants', stat: '20' },
+            ].map((item, index) => (
+              <div class="flex justify-between items-center py-2 border-b border-border last:border-0">
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-text-muted w-6">{index + 1}</span>
+                  <div>
+                    <div class="font-semibold">{item.player}</div>
+                    <div class="text-xs text-text-muted">{item.team}</div>
+                  </div>
+                </div>
+                <span class="text-2xl font-bold tabular-nums">{item.stat}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- News NPB -->
+  <section class="section bg-bg-surface">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">Actualités NPB</h2>
+        <Button variant="ghost" size="sm" href="/news/npb/">
+          Toutes les news NPB →
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {recentNewsNPB.map((article) => (
+          <Card variant="bordered" padding="md" class="hover:shadow-lg transition-shadow">
+            <div class="mb-3">
+              <span class="text-xs font-semibold text-primary uppercase tracking-wide">
+                NPB
+              </span>
+              <span class="text-xs text-text-muted ml-2">
+                {new Date(article.date).toLocaleDateString('fr-FR')}
+              </span>
+            </div>
+            <h3 class="font-bold text-lg mb-2 line-clamp-2">
+              {article.title}
+            </h3>
+            <p class="text-sm text-text-muted mb-4 line-clamp-3">
+              {article.excerpt}
+            </p>
+            <Button variant="link" size="sm" href={`/news/npb/${article.slug}/`}>
+              Lire la suite →
+            </Button>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Info NPB -->
+  <section class="section">
+    <div class="container mx-auto">
+      <Card variant="bordered" padding="lg" class="max-w-3xl mx-auto">
+        <h3 class="text-xl font-bold mb-4">📖 À propos de la NPB</h3>
+        <p class="text-text-secondary mb-4">
+          La <strong>Nippon Professional Baseball (NPB)</strong> est la ligue professionnelle de baseball du Japon.
+          Créée en 1950, elle est composée de <strong>12 équipes</strong> réparties en deux ligues : Central et Pacific.
+        </p>
+        <p class="text-text-secondary mb-4">
+          La saison régulière se déroule de mars à octobre. Les 3 meilleures équipes de chaque ligue s'affrontent en playoffs,
+          puis les champions de chaque ligue disputent la <strong>Japan Series</strong> en 7 matchs pour désigner le champion du Japon.
+        </p>
+        <p class="text-text-secondary mb-4">
+          Le baseball est le sport national au Japon, avec une popularité immense et des stades remplis à chaque match.
+          De nombreuses stars MLB sont issues de la NPB (Shohei Ohtani, Ichiro Suzuki, Yu Darvish...).
+        </p>
+        <div class="flex gap-3 mt-6">
+          <Button variant="ghost" size="sm" href="/histoire/npb/japan-series/">
+            Histoire de la Japan Series
+          </Button>
+          <Button variant="ghost" size="sm" href="/npb/equipes/">
+            Découvrir les 12 équipes
+          </Button>
+        </div>
+      </Card>
+    </div>
+  </section>
+</BaseLayout>
