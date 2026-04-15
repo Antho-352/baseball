@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 8 en cours - Backend API créé, intégration UnifiedProvider
+**Phase** : Step 8 complet - Backend API + Frontend client créés, prêt pour données réelles
 
 ---
 
@@ -293,7 +293,47 @@ curl http://localhost:3000/api/games/mlb/2026-04-15
 curl http://localhost:3000/api/standings/kbo/2026
 ```
 
-### 8. Test Intégration UnifiedProvider
+### 8. ✅ Frontend API Client (2026-04-15)
+
+**Fichiers créés** :
+- `/frontend/src/lib/api.ts` → Client API avec TypeScript (200+ lignes)
+- `/frontend/.env` → Config API_URL (localhost:3210)
+
+**Fonctions exportées** :
+- `getGames(league, date?)` → Fetch matchs
+- `getStandings(league, season?)` → Fetch classements
+- `getTopPlayers(league, stat?, limit?)` → Fetch top joueurs
+- `healthCheck()` → Test connexion API
+
+**Types TypeScript** :
+- `Game` → Match complet (id, teams, scores, status, date)
+- `Standing` → Classement (rank, team, W-L, pct, GB, streak)
+- `Player` → Joueur (id, name, team, position, stats)
+- `*Response` → Wrappers API (league, data, cached)
+
+**Transformers** :
+- `transformGameToCardProps()` → API Game → GameCard props
+- `transformStandingToTableProps()` → API Standing → StandingsTable props
+- `transformPlayerToCardProps()` → API Player → PlayerCard props
+
+**Error handling** :
+- Try/catch dans apiFetch
+- Console.error si échec
+- Throw error pour pages
+
+**Env variables** :
+- `PUBLIC_API_URL` → Backend URL (default: localhost:3210)
+- Production ready (commenté)
+
+**Usage dans pages Astro** :
+```typescript
+import { getGames, transformGameToCardProps } from '@/lib/api';
+
+const response = await getGames('mlb');
+const games = response.games.map(transformGameToCardProps);
+```
+
+### 9. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
