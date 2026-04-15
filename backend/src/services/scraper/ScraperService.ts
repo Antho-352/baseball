@@ -213,17 +213,13 @@ export class ScraperService {
 
   /**
    * Extrait les matchs depuis la page
-   * IMPORTANT: Les sélecteurs CSS doivent être validés en inspectant la page réelle
+   * Sélecteurs validés via inspection Playwright (2026-04-15)
    */
   private async extractMatches(
     page: Page,
     league: 'KBO' | 'NPB'
   ): Promise<MatchScore[]> {
     const scrapedAt = new Date().toISOString();
-
-    // TODO: Ajuster les sélecteurs après inspection réelle de la page
-    // Pour l'instant, utilisation de sélecteurs hypothétiques
-
     const matches: MatchScore[] = [];
 
     try {
@@ -233,17 +229,24 @@ export class ScraperService {
       // Extraire tous les matchs
       const matchElements = await page.$$(CSS_SELECTORS.matchRow);
 
+      this.log(`[${league}] Found ${matchElements.length} match elements`);
+
       for (const matchEl of matchElements) {
         try {
+          // Extraire matchId depuis l'ID du container (format: g_6_XXXXXXXX)
+          const matchId = await matchEl.evaluate((el) => el.id);
+
           const homeTeam = await matchEl.$eval(
             CSS_SELECTORS.homeTeam,
             (el) => el.textContent?.trim() || ''
-          );
+          ).catch(() => '');
+
           const awayTeam = await matchEl.$eval(
             CSS_SELECTORS.awayTeam,
             (el) => el.textContent?.trim() || ''
-          );
+          ).catch(() => '');
 
+          // Scores (peuvent être absents si match pas encore joué)
           const homeScoreText = await matchEl.$eval(
             CSS_SELECTORS.homeScore,
             (el) => el.textContent?.trim() || ''
@@ -254,10 +257,11 @@ export class ScraperService {
             (el) => el.textContent?.trim() || ''
           ).catch(() => null);
 
-          const statusText = await matchEl.$eval(
-            CSS_SELECTORS.status,
-            (el) => el.textContent?.trim() || ''
-          ).catch(() => 'NS');
+          // Vérifier si match est live via data-live attribute
+          const isLive = await matchEl.$eval(
+            CSS_SELECTORS.homeScore,
+            (el) => el.getAttribute('data-live') === 'true'
+          ).catch(() => false);
 
           const startTime = await matchEl.$eval(
             CSS_SELECTORS.startTime,
@@ -267,7 +271,16 @@ export class ScraperService {
           // Parser les données
           const homeScore = homeScoreText ? parseInt(homeScoreText) : null;
           const awayScore = awayScoreText ? parseInt(awayScoreText) : null;
-          const status = this.parseStatus(statusText);
+
+          // Déterminer le statut
+          let status: MatchScore['status'];
+          if (isLive) {
+            status = 'IN_PROGRESS';
+          } else if (homeScore !== null && awayScore !== null) {
+            status = 'FT';
+          } else {
+            status = 'NS';
+          }
 
           // Construire l'objet match
           matches.push({
@@ -276,7 +289,7 @@ export class ScraperService {
             homeScore: isNaN(homeScore!) ? null : homeScore,
             awayScore: isNaN(awayScore!) ? null : awayScore,
             status,
-            startTime: this.parseStartTime(startTime),
+            startTime: this.parseStartTime(startTime, league),
             league,
             scrapedAt,
           });
@@ -285,9 +298,13 @@ export class ScraperService {
           // Continuer avec les autres matchs
         }
       }
+
+      if (matches.length === 0) {
+        this.log(`[${league}] ⚠️  WARNING: Found ${matchElements.length} elements but extracted 0 matches - selectors may need adjustment`);
+      }
+
     } catch (error) {
-      this.log(`[${league}] Error finding matches: ${error}`);
-      // Retourner tableau vide plutôt que crash
+      this.log(`[${league}] Error finding matches (selector may be wrong): ${error}`);
     }
 
     return matches;
@@ -314,17 +331,30 @@ export class ScraperService {
 
   /**
    * Parse l'heure de début
+   * Format observé: "14.04. 18:30" ou "15.04. 11:10"
    */
-  private parseStartTime(timeText: string): string {
-    // Format attendu : "18:30" ou "Finished" ou "Live"
-    // Pour l'instant, retourner ISO avec date du jour
-    const today = new Date().toISOString().split('T')[0];
+  private parseStartTime(timeText: string, league: 'KBO' | 'NPB'): string {
+    // Format: "DD.MM. HH:MM"
+    const match = timeText.match(/(\d{2})\.(\d{2})\.\s*(\d{2}):(\d{2})/);
 
-    if (/^\d{2}:\d{2}$/.test(timeText)) {
-      return `${today}T${timeText}:00Z`;
+    if (match) {
+      const [, day, month, hour, minute] = match;
+      const year = new Date().getFullYear();
+
+      // Créer la date dans le timezone de la ligue
+      const timezone = league === 'KBO' ? 'Asia/Seoul' : 'Asia/Tokyo';
+
+      try {
+        // Format ISO sans timezone conversion (on garde l'heure locale)
+        const dateStr = `${year}-${month}-${day}T${hour}:${minute}:00`;
+        return new Date(dateStr).toISOString();
+      } catch (error) {
+        this.log(`Error parsing time: ${timeText}`);
+        return new Date().toISOString();
+      }
     }
 
-    // Sinon retourner maintenant
+    // Fallback
     return new Date().toISOString();
   }
 

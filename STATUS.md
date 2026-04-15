@@ -42,20 +42,26 @@ UnifiedProvider {
 
 ## ⚠️ TODO Critique
 
-### 1. Valider Sélecteurs CSS Scraper
+### 1. ✅ Sélecteurs CSS Scraper Validés (2026-04-15)
 
-**Fichier** : `/backend/src/services/scraper/config.ts`
+**Tests effectués** :
+- ✅ 60 matchs KBO trouvés
+- ✅ 73 matchs MLB trouvés
+- ✅ Structure DOM identifiée (Flashscore skin)
 
+**Sélecteurs validés** :
 ```typescript
-export const CSS_SELECTORS = {
-  matchRow: '.event__match',      // ⚠️ À VALIDER
-  homeTeam: '.event__participant--home',
-  awayTeam: '.event__participant--away',
-  // ... etc
-};
+matchRow: '[id^="g_6_"]'  // ✅ Format: g_6_XXXXXXXX
+homeTeam: '.event__homeParticipant .wcl-name_jjfMf'
+awayTeam: '.event__awayParticipant .wcl-name_jjfMf'
+homeScore: '.event__score--home'
+awayScore: '.event__score--away'
+startTime: '.event__time'  // Format: "14.04. 18:30"
 ```
 
-**Action** : Tester avec Playwright en mode visible, prendre screenshot, identifier vrais sélecteurs.
+**Fichiers mis à jour** :
+- `/backend/src/services/scraper/config.ts` (sélecteurs corrigés)
+- `/backend/src/services/scraper/ScraperService.ts` (extraction améliorée)
 
 ### 2. Test Intégration UnifiedProvider
 

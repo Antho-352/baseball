@@ -84,17 +84,31 @@ export const SCRAPER_URLS = {
 };
 
 /**
- * Sélecteurs CSS (à ajuster après inspection réelle)
- * IMPORTANT: Ces sélecteurs sont des hypothèses et doivent être validés
+ * Sélecteurs CSS (✅ VALIDÉS via inspection Playwright 2026-04-15)
+ * Source: baseball24.com (Flashscore skin)
+ * Tests: 60 matchs KBO, 73 matchs MLB trouvés
  */
 export const CSS_SELECTORS = {
-  // À affiner après inspection avec Playwright
-  matchRow: '.event__match',
-  homeTeam: '.event__participant--home',
-  awayTeam: '.event__participant--away',
+  // Container principal: chaque match a un ID de type g_6_XXXXXXXX
+  matchRow: '[id^="g_6_"]',
+
+  // Équipes - classe .wcl-name_jjfMf contient le nom
+  homeTeam: '.event__homeParticipant .wcl-name_jjfMf',
+  awayTeam: '.event__awayParticipant .wcl-name_jjfMf',
+
+  // Scores - classes event__score--home/away
   homeScore: '.event__score--home',
   awayScore: '.event__score--away',
-  status: '.event__stage',
+
+  // Heure/Date - format "14.04. 18:30"
   startTime: '.event__time',
-  innings: '.event__part', // Si disponible
+
+  // Pitchers (bonus info si besoin)
+  pitchers: '.event__pitchers',
+
+  // Status: déterminé par présence des scores
+  // - Si scores présents → "FT" (Finished)
+  // - Si pas de scores → "NS" (Not Started)
+  // - Si data-live="true" → "IN_PROGRESS"
+  // (Pas de sélecteur direct, logique dans extractMatches)
 };

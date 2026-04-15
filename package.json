@@ -1,0 +1,27 @@
+{
+  "name": "baseball",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test-scraper-selectors.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Antho-352/baseball.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Antho-352/baseball/issues"
+  },
+  "homepage": "https://github.com/Antho-352/baseball#readme",
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}
