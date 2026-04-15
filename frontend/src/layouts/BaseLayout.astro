@@ -6,15 +6,29 @@
  * - title: Titre de la page
  * - description: Meta description
  * - ogImage?: Image Open Graph
+ * - showNav?: Afficher la navigation (défaut: true)
+ * - showFooter?: Afficher le footer (défaut: true)
  */
+
+import NavBar from '@components/ui/NavBar.astro';
+import Footer from '@components/ui/Footer.astro';
 
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  showNav?: boolean;
+  showFooter?: boolean;
 }
 
-const { title, description, ogImage } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  showNav = true,
+  showFooter = true,
+} = Astro.props;
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultOgImage = new URL('/og-default.jpg', Astro.site);
 ---
@@ -60,8 +74,16 @@ const defaultOgImage = new URL('/og-default.jpg', Astro.site);
     <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
+    <!-- Navigation -->
+    {showNav && <NavBar currentPath={Astro.url.pathname} />}
+
     <!-- Contenu de la page -->
-    <slot />
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    {showFooter && <Footer />}
   </body>
 </html>
 

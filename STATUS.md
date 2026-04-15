@@ -1,7 +1,7 @@
 # Status Projet - home-run.fr
 
 **Dernière mise à jour** : 2026-04-15
-**Phase** : Step 4 complet - Design system + 3 composants UI de base créés
+**Phase** : Step 5 complet - 10 composants UI créés, prêt pour Homepage MVP
 
 ---
 
@@ -122,7 +122,60 @@ startTime: '.event__time'  // Format: "14.04. 18:30"
 - ✅ Props typées avec interface
 - ✅ Composants réutilisables
 
-### 4. Test Intégration UnifiedProvider
+### 4. ✅ Composants UI Restants (2026-04-15)
+
+**Fichiers créés** :
+- `/frontend/src/components/ui/ScoreBoard.astro` → Affichage score match
+  - Props: homeTeam, awayTeam, homeScore, awayScore, status, inning, startTime
+  - Badge status intégré
+  - Winner highlight (vert)
+  - Grid 3 colonnes responsive
+
+- `/frontend/src/components/ui/GameCard.astro` → Card match pour listes
+  - Props: homeTeam, awayTeam, scores, status, startTime, gameId, league
+  - Badge status avec heure si scheduled
+  - Hover shadow effect
+  - CTA "Voir le match"
+
+- `/frontend/src/components/ui/PlayerCard.astro` → Card joueur avec stats
+  - Props: name, position, teamName, teamLogo, playerImage, stats[], playerId
+  - Photo ronde ou initiale
+  - Grid stats 3 colonnes
+  - CTA "Voir profil"
+
+- `/frontend/src/components/ui/StandingsTable.astro` → Tableau classement
+  - Props: standings[], showGB, highlightTop
+  - Responsive scroll horizontal mobile
+  - Zebra striping
+  - Top 3 highlight vert
+  - Colonnes: Rang, Équipe, V, D, %, GB, Série
+
+- `/frontend/src/components/ui/StatWidget.astro` → Widget stat individuelle
+  - Props: label, value, trend, subtitle, icon
+  - Trend arrows (↑ vert, ↓ rouge, → neutre)
+  - Tabular nums
+
+- `/frontend/src/components/ui/NavBar.astro` → Navigation principale
+  - Props: currentPath
+  - Links: Accueil, MLB, KBO, NPB, Pronostics, News
+  - Dark mode toggle intégré
+  - Mobile menu hamburger
+  - Sticky top
+
+- `/frontend/src/components/ui/Footer.astro` → Footer site
+  - 4 colonnes: Brand, Ligues, Contenu, Site
+  - ANJ warning (jeu responsable)
+  - Social links (Twitter, Facebook)
+  - Copyright dynamique
+
+**BaseLayout mis à jour** :
+- Import NavBar + Footer
+- Props showNav et showFooter (défaut: true)
+- Structure: NavBar → <main><slot /></main> → Footer
+
+**Total** : 10 composants UI complets (3 base + 7 spécifiques)
+
+### 5. Test Intégration UnifiedProvider
 
 ```typescript
 const provider = createDataProvider('unified');
@@ -140,13 +193,13 @@ mysql -u root -p baseball_fr < docs/schema.sql
 
 ## 📋 Prochaines Étapes (Ordre)
 
-1. **Step 4** : ✅ Design System + Astro + 3 composants UI complet
-2. **Step 5** : Créer 7 composants UI restants (ScoreBoard, GameCard, PlayerCard, StandingsTable, StatWidget, NavBar, Footer)
-3. **Step 6** : Template Homepage MVP
-4. **Step 7** : Pages Match + Player + Standings
-5. **Step 8** : Backend API (Node + Express)
-6. **Step 9** : CMS admin (TipTap éditeur)
-7. **Step 10** : Cron jobs sync données
+1. **Step 4-5** : ✅ Design System + 10 composants UI complets
+2. **Step 6** : Template Homepage MVP (en cours)
+3. **Step 7** : Pages Hub ligues (/mlb/, /kbo/, /npb/)
+4. **Step 8** : Pages Match + Player + Standings
+5. **Step 9** : Backend API (Node + Express)
+6. **Step 10** : CMS admin (TipTap éditeur)
+7. **Step 11** : Cron jobs sync données
 8. **V1.5** : Activer ScraperService (sélecteurs validés)
 
 ---

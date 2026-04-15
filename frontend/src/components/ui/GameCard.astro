@@ -1,0 +1,132 @@
+---
+/**
+ * GameCard Component
+ *
+ * Card pour afficher un match dans une liste
+ *
+ * Props:
+ * - homeTeam: Nom équipe domicile
+ * - awayTeam: Nom équipe extérieur
+ * - homeScore?: Score domicile
+ * - awayScore?: Score extérieur
+ * - status: Statut du match
+ * - startTime: Date/heure du match
+ * - gameId: ID du match (pour le lien)
+ * - league?: Ligue (MLB/KBO/NPB)
+ *
+ * Usage:
+ * <GameCard
+ *   homeTeam="Dodgers"
+ *   awayTeam="Yankees"
+ *   homeScore={5}
+ *   awayScore={3}
+ *   status="live"
+ *   startTime={new Date()}
+ *   gameId="mlb-2026-04-15-nyy-lad"
+ *   league="MLB"
+ * />
+ */
+
+import Card from './Card.astro';
+import Badge from './Badge.astro';
+import Button from './Button.astro';
+
+interface Props {
+  homeTeam: string;
+  awayTeam: string;
+  homeScore?: number | null;
+  awayScore?: number | null;
+  status: 'live' | 'final' | 'scheduled' | 'postponed';
+  startTime: Date | string;
+  gameId: string;
+  league?: string;
+  class?: string;
+}
+
+const {
+  homeTeam,
+  awayTeam,
+  homeScore,
+  awayScore,
+  status,
+  startTime,
+  gameId,
+  league,
+  class: className = '',
+} = Astro.props;
+
+// Formatter l'heure
+const date = typeof startTime === 'string' ? new Date(startTime) : startTime;
+const timeString = date.toLocaleTimeString('fr-FR', {
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Europe/Paris'
+});
+
+// Badge status
+const badgeStatus = {
+  live: 'live' as const,
+  final: 'finished' as const,
+  scheduled: 'scheduled' as const,
+  postponed: 'postponed' as const,
+};
+
+// Winner
+const homeWins = status === 'final' && homeScore !== null && awayScore !== null && homeScore > awayScore;
+const awayWins = status === 'final' && homeScore !== null && awayScore !== null && awayScore > homeScore;
+---
+
+<Card variant="bordered" padding="md" class={`hover:shadow-md transition-shadow ${className}`}>
+  <!-- Header: League + Status -->
+  <div class="flex justify-between items-center mb-4">
+    {league && (
+      <span class="text-xs font-semibold text-text-muted uppercase tracking-wide">
+        {league}
+      </span>
+    )}
+    <Badge status={badgeStatus[status]} size="sm">
+      {status === 'live' ? 'LIVE' : status === 'final' ? 'FT' : status === 'postponed' ? 'PPD' : timeString}
+    </Badge>
+  </div>
+
+  <!-- Teams + Scores -->
+  <div class="space-y-2 mb-4">
+    <!-- Away team -->
+    <div class="flex justify-between items-center">
+      <span class={`font-medium ${awayWins ? 'font-bold text-win' : ''}`}>
+        {awayTeam}
+      </span>
+      {awayScore !== null ? (
+        <span class={`text-2xl font-bold tabular-nums ${awayWins ? 'text-win' : ''}`}>
+          {awayScore}
+        </span>
+      ) : (
+        <span class="text-sm text-text-muted">—</span>
+      )}
+    </div>
+
+    <!-- Home team -->
+    <div class="flex justify-between items-center">
+      <span class={`font-medium ${homeWins ? 'font-bold text-win' : ''}`}>
+        {homeTeam}
+      </span>
+      {homeScore !== null ? (
+        <span class={`text-2xl font-bold tabular-nums ${homeWins ? 'text-win' : ''}`}>
+          {homeScore}
+        </span>
+      ) : (
+        <span class="text-sm text-text-muted">—</span>
+      )}
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <Button
+    variant="ghost"
+    size="sm"
+    href={`/match/${gameId}/`}
+    class="w-full"
+  >
+    Voir le match
+  </Button>
+</Card>

@@ -1,0 +1,127 @@
+---
+/**
+ * PlayerCard Component
+ *
+ * Card pour afficher un joueur avec ses stats principales
+ *
+ * Props:
+ * - name: Nom du joueur
+ * - position: Position (DH, SP, 1B, etc.)
+ * - teamName: Nom de l'équipe
+ * - teamLogo?: URL du logo d'équipe
+ * - playerImage?: URL de la photo du joueur
+ * - stats: Array de stats {label, value}
+ * - playerId: ID du joueur (pour le lien)
+ *
+ * Usage:
+ * <PlayerCard
+ *   name="Shohei Ohtani"
+ *   position="DH/SP"
+ *   teamName="Los Angeles Dodgers"
+ *   stats={[
+ *     { label: 'AVG', value: '.304' },
+ *     { label: 'HR', value: '44' },
+ *     { label: 'RBI', value: '95' }
+ *   ]}
+ *   playerId="shohei-ohtani"
+ * />
+ */
+
+import Card from './Card.astro';
+import Button from './Button.astro';
+
+interface Stat {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  name: string;
+  position: string;
+  teamName: string;
+  teamLogo?: string;
+  playerImage?: string;
+  stats: Stat[];
+  playerId: string;
+  class?: string;
+}
+
+const {
+  name,
+  position,
+  teamName,
+  teamLogo,
+  playerImage,
+  stats,
+  playerId,
+  class: className = '',
+} = Astro.props;
+---
+
+<Card variant="elevated" padding="md" class={className}>
+  <!-- Player header -->
+  <div class="flex items-start gap-4 mb-4">
+    <!-- Player image -->
+    {playerImage ? (
+      <img
+        src={playerImage}
+        alt={name}
+        class="w-16 h-16 rounded-full object-cover border-2 border-border"
+      />
+    ) : (
+      <div class="w-16 h-16 rounded-full bg-bg-surface border-2 border-border flex items-center justify-center">
+        <span class="text-2xl font-bold text-text-muted">
+          {name.charAt(0)}
+        </span>
+      </div>
+    )}
+
+    <!-- Player info -->
+    <div class="flex-1">
+      <h3 class="font-bold text-lg leading-tight mb-1">
+        {name}
+      </h3>
+      <p class="text-sm text-text-muted mb-1">
+        {position}
+      </p>
+      <div class="flex items-center gap-2">
+        {teamLogo && (
+          <img
+            src={teamLogo}
+            alt={teamName}
+            class="w-4 h-4 object-contain"
+          />
+        )}
+        <span class="text-xs text-text-muted">
+          {teamName}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats grid -->
+  {stats.length > 0 && (
+    <div class="grid grid-cols-3 gap-4 mb-4 py-4 border-t border-border">
+      {stats.map((stat) => (
+        <div class="text-center">
+          <div class="text-xs text-text-muted uppercase tracking-wide mb-1">
+            {stat.label}
+          </div>
+          <div class="text-lg font-bold tabular-nums">
+            {stat.value}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <!-- CTA -->
+  <Button
+    variant="ghost"
+    size="sm"
+    href={`/player/${playerId}/`}
+    class="w-full"
+  >
+    Voir profil
+  </Button>
+</Card>

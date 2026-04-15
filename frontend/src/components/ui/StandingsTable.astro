@@ -1,0 +1,160 @@
+---
+/**
+ * StandingsTable Component
+ *
+ * Tableau de classement d'une ligue
+ *
+ * Props:
+ * - standings: Array des équipes avec stats
+ * - showGB?: Afficher la colonne Games Behind (défaut: true)
+ * - highlightTop?: Nombre d'équipes à mettre en avant (défaut: 3)
+ *
+ * Standing shape:
+ * {
+ *   rank: number;
+ *   teamName: string;
+ *   teamLogo?: string;
+ *   wins: number;
+ *   losses: number;
+ *   pct: number;  // Pourcentage de victoires (0.xxx)
+ *   gb: number;   // Games Behind
+ *   streak?: string; // Ex: "W5", "L2"
+ * }
+ *
+ * Usage:
+ * <StandingsTable
+ *   standings={mlbStandings}
+ *   showGB={true}
+ *   highlightTop={3}
+ * />
+ */
+
+interface Standing {
+  rank: number;
+  teamName: string;
+  teamLogo?: string;
+  wins: number;
+  losses: number;
+  pct: number;
+  gb: number;
+  streak?: string;
+}
+
+interface Props {
+  standings: Standing[];
+  showGB?: boolean;
+  highlightTop?: number;
+  class?: string;
+}
+
+const {
+  standings,
+  showGB = true,
+  highlightTop = 3,
+  class: className = '',
+} = Astro.props;
+
+// Formatter le pourcentage
+const formatPct = (pct: number) => pct.toFixed(3);
+
+// Formatter GB (Games Behind)
+const formatGB = (gb: number) => {
+  if (gb === 0) return '—';
+  return gb.toFixed(1);
+};
+---
+
+<div class={`overflow-x-auto ${className}`}>
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-bg-surface border-b-2 border-border">
+        <th class="text-left py-3 px-4 font-semibold text-sm">Rang</th>
+        <th class="text-left py-3 px-4 font-semibold text-sm">Équipe</th>
+        <th class="text-center py-3 px-4 font-semibold text-sm">V</th>
+        <th class="text-center py-3 px-4 font-semibold text-sm">D</th>
+        <th class="text-center py-3 px-4 font-semibold text-sm">%</th>
+        {showGB && (
+          <th class="text-center py-3 px-4 font-semibold text-sm">GB</th>
+        )}
+        <th class="text-center py-3 px-4 font-semibold text-sm">Série</th>
+      </tr>
+    </thead>
+    <tbody>
+      {standings.map((team) => {
+        const isHighlighted = team.rank <= highlightTop;
+        return (
+          <tr
+            class={`border-b border-border transition-colors hover:bg-bg-surface ${
+              isHighlighted ? 'bg-success-bg/10' : ''
+            }`}
+          >
+            <!-- Rank -->
+            <td class="py-3 px-4 text-center">
+              <span class={`font-bold ${isHighlighted ? 'text-success' : ''}`}>
+                {team.rank}
+              </span>
+            </td>
+
+            <!-- Team name + logo -->
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-3">
+                {team.teamLogo && (
+                  <img
+                    src={team.teamLogo}
+                    alt={team.teamName}
+                    class="w-6 h-6 object-contain"
+                  />
+                )}
+                <span class="font-medium">
+                  {team.teamName}
+                </span>
+              </div>
+            </td>
+
+            <!-- Wins -->
+            <td class="py-3 px-4 text-center font-semibold tabular-nums">
+              {team.wins}
+            </td>
+
+            <!-- Losses -->
+            <td class="py-3 px-4 text-center tabular-nums">
+              {team.losses}
+            </td>
+
+            <!-- Percentage -->
+            <td class="py-3 px-4 text-center font-semibold tabular-nums">
+              {formatPct(team.pct)}
+            </td>
+
+            <!-- Games Behind -->
+            {showGB && (
+              <td class="py-3 px-4 text-center tabular-nums text-text-muted">
+                {formatGB(team.gb)}
+              </td>
+            )}
+
+            <!-- Streak -->
+            <td class="py-3 px-4 text-center">
+              {team.streak && (
+                <span
+                  class={`text-xs font-semibold ${
+                    team.streak.startsWith('W') ? 'text-success' : 'text-error'
+                  }`}
+                >
+                  {team.streak}
+                </span>
+              )}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* Zebra striping pour meilleure lisibilité */
+  tbody tr:nth-child(even):not(:hover) {
+    background-color: rgba(var(--color-surface), 0.3);
+  }
+</style>

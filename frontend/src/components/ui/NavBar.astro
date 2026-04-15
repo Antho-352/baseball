@@ -1,0 +1,138 @@
+---
+/**
+ * NavBar Component
+ *
+ * Barre de navigation principale du site
+ *
+ * Props:
+ * - currentPath: Chemin actuel pour highlight (Astro.url.pathname)
+ *
+ * Usage:
+ * <NavBar currentPath={Astro.url.pathname} />
+ */
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+// Navigation items
+const navItems = [
+  { name: 'Accueil', href: '/' },
+  { name: 'MLB', href: '/mlb/' },
+  { name: 'KBO', href: '/kbo/' },
+  { name: 'NPB', href: '/npb/' },
+  { name: 'Pronostics', href: '/pronostics/' },
+  { name: 'News', href: '/news/' },
+];
+
+// Check if path is active (exact or starts with for sub-pages)
+const isActive = (href: string) => {
+  if (href === '/') {
+    return currentPath === '/';
+  }
+  return currentPath.startsWith(href);
+};
+---
+
+<nav class="sticky top-0 z-sticky bg-bg border-b border-border">
+  <div class="container mx-auto">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 font-bold text-xl">
+        <span class="text-2xl">⚾</span>
+        <span>home-run.fr</span>
+      </a>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex items-center gap-6">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`font-medium transition-colors ${
+              isActive(item.href)
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-text hover:text-primary'
+            }`}
+          >
+            {item.name}
+          </a>
+        ))}
+
+        <!-- Dark mode toggle -->
+        <button
+          id="nav-theme-toggle"
+          class="p-2 rounded-md hover:bg-bg-surface transition-colors"
+          aria-label="Toggle dark mode"
+        >
+          <span id="nav-theme-icon" class="text-xl">🌙</span>
+        </button>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-toggle"
+        class="md:hidden p-2 rounded-md hover:bg-bg-surface transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden pb-4">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`block py-2 px-4 rounded-md transition-colors ${
+            isActive(item.href)
+              ? 'bg-primary/10 text-primary font-semibold'
+              : 'text-text hover:bg-bg-surface'
+          }`}
+        >
+          {item.name}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Dark mode toggle
+  const toggleBtn = document.getElementById('nav-theme-toggle');
+  const icon = document.getElementById('nav-theme-icon');
+
+  if (toggleBtn && icon) {
+    // Set initial icon
+    const currentTheme = document.documentElement.dataset.theme;
+    icon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    toggleBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.dataset.theme;
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      html.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      icon.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  }
+
+  // Mobile menu toggle
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (mobileToggle && mobileMenu) {
+    mobileToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+</script>

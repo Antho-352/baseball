@@ -1,0 +1,87 @@
+---
+/**
+ * StatWidget Component
+ *
+ * Widget pour afficher une stat individuelle avec tendance
+ *
+ * Props:
+ * - label: Nom de la stat (ex: "AVG", "ERA", "HR")
+ * - value: Valeur de la stat
+ * - trend?: Tendance ('up' | 'down' | 'neutral')
+ * - subtitle?: Texte additionnel (ex: "Saison 2026")
+ * - icon?: Icône (emoji ou classe icon)
+ *
+ * Usage:
+ * <StatWidget
+ *   label="AVG"
+ *   value=".304"
+ *   trend="up"
+ *   subtitle="Saison 2026"
+ * />
+ */
+
+interface Props {
+  label: string;
+  value: string | number;
+  trend?: 'up' | 'down' | 'neutral';
+  subtitle?: string;
+  icon?: string;
+  class?: string;
+}
+
+const {
+  label,
+  value,
+  trend,
+  subtitle,
+  icon,
+  class: className = '',
+} = Astro.props;
+
+// Trend colors
+const trendClasses = {
+  up: 'text-success',
+  down: 'text-error',
+  neutral: 'text-text-muted',
+};
+
+// Trend icons
+const trendIcons = {
+  up: '↑',
+  down: '↓',
+  neutral: '→',
+};
+---
+
+<div class={`bg-bg-surface border border-border rounded-lg p-4 ${className}`}>
+  <!-- Header: Label + Icon -->
+  <div class="flex items-center justify-between mb-2">
+    <span class="text-sm font-medium text-text-muted uppercase tracking-wide">
+      {label}
+    </span>
+    {icon && (
+      <span class="text-xl">
+        {icon}
+      </span>
+    )}
+  </div>
+
+  <!-- Value -->
+  <div class="flex items-baseline gap-2">
+    <span class="text-3xl font-bold tabular-nums">
+      {value}
+    </span>
+    {trend && (
+      <span class={`text-xl ${trendClasses[trend]}`}>
+        {trendIcons[trend]}
+      </span>
+    )}
+  </div>
+
+  <!-- Subtitle -->
+  {subtitle && (
+    <div class="mt-1 text-xs text-text-muted">
+      {subtitle}
+    </div>
+  )}
+</div>

@@ -1,0 +1,121 @@
+---
+/**
+ * ScoreBoard Component
+ *
+ * Affiche le score d'un match avec équipes et statut
+ *
+ * Props:
+ * - homeTeam: Nom équipe domicile
+ * - awayTeam: Nom équipe extérieur
+ * - homeScore: Score domicile (null si pas encore joué)
+ * - awayScore: Score extérieur (null si pas encore joué)
+ * - status: Statut du match ('live' | 'final' | 'scheduled' | 'postponed')
+ * - inning?: Manche en cours (si live)
+ * - startTime?: Heure de début (si scheduled)
+ *
+ * Usage:
+ * <ScoreBoard
+ *   homeTeam="Yankees"
+ *   awayTeam="Red Sox"
+ *   homeScore={5}
+ *   awayScore={3}
+ *   status="live"
+ *   inning="8e manche"
+ * />
+ */
+
+import Badge from './Badge.astro';
+
+interface Props {
+  homeTeam: string;
+  awayTeam: string;
+  homeScore?: number | null;
+  awayScore?: number | null;
+  status: 'live' | 'final' | 'scheduled' | 'postponed';
+  inning?: string;
+  startTime?: string;
+  class?: string;
+}
+
+const {
+  homeTeam,
+  awayTeam,
+  homeScore,
+  awayScore,
+  status,
+  inning,
+  startTime,
+  class: className = '',
+} = Astro.props;
+
+// Déterminer le gagnant (si match terminé)
+const homeWins = status === 'final' && homeScore !== null && awayScore !== null && homeScore > awayScore;
+const awayWins = status === 'final' && homeScore !== null && awayScore !== null && awayScore > homeScore;
+
+// Badge status mapping
+const badgeStatus = {
+  live: 'live' as const,
+  final: 'finished' as const,
+  scheduled: 'scheduled' as const,
+  postponed: 'postponed' as const,
+};
+
+const badgeText = {
+  live: 'EN DIRECT',
+  final: 'TERMINÉ',
+  scheduled: 'PROGRAMMÉ',
+  postponed: 'REPORTÉ',
+};
+---
+
+<div class={`bg-bg-surface border border-border rounded-lg p-6 ${className}`}>
+  <!-- Status badge -->
+  <div class="flex justify-center mb-4">
+    <Badge status={badgeStatus[status]} size="sm">
+      {badgeText[status]}
+    </Badge>
+  </div>
+
+  <!-- Score grid -->
+  <div class="grid grid-cols-[1fr_auto_1fr] gap-6 items-center text-center">
+    <!-- Away team -->
+    <div>
+      <div class={`font-semibold text-lg ${awayWins ? 'text-win font-bold' : ''}`}>
+        {awayTeam}
+      </div>
+    </div>
+
+    <!-- Score -->
+    <div class="flex items-center gap-3">
+      {homeScore !== null && awayScore !== null ? (
+        <>
+          <span class={`text-4xl font-bold tabular-nums ${awayWins ? 'text-win' : ''}`}>
+            {awayScore}
+          </span>
+          <span class="text-2xl text-text-muted">-</span>
+          <span class={`text-4xl font-bold tabular-nums ${homeWins ? 'text-win' : ''}`}>
+            {homeScore}
+          </span>
+        </>
+      ) : (
+        <span class="text-xl text-text-muted">
+          {startTime || 'vs'}
+        </span>
+      )}
+    </div>
+
+    <!-- Home team -->
+    <div>
+      <div class={`font-semibold text-lg ${homeWins ? 'text-win font-bold' : ''}`}>
+        {homeTeam}
+      </div>
+    </div>
+  </div>
+
+  <!-- Inning info (si live) -->
+  {inning && status === 'live' && (
+    <div class="text-center mt-4 text-sm text-text-muted">
+      {inning}
+    </div>
+  )}
+</div>
