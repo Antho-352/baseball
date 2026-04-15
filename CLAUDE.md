@@ -18,6 +18,8 @@ Si une décision est risquée → explique pourquoi et donne les conséquences.
 
 ## Projet
 
+**Nom du site** : **home-run.fr**
+
 Site de référence français sur le baseball professionnel (MLB, KBO, NPB).
 Monétisation : affiliation paris sportifs (opérateurs ANJ uniquement).
 
@@ -208,39 +210,48 @@ Sitemap mis à jour → indexation Google
 
 ---
 
-## Sources de données
+## Sources de données (Solution 100% Gratuite)
 
-### MLB (officiel, gratuit)
+### MLB (Officielle, gratuite)
 - **API** : `https://statsapi.mlb.com/api/v1/`
-- **Couverture** : scores live, stats, classements, calendrier, blessures
-- **Limite** : aucune connue, usage fair-use
+- **Couverture** : scores live, stats avancées, classements, calendrier, blessures
+- **Limite** : Aucune (fair-use)
+- **Provider** : `MLBStatsProvider`
 
-### KBO + NPB (gratuit/payant)
-- **API** : TheSportsDB (gratuit basic, ~9$/mois pour livescores)
-- **Couverture** : scores, classements, calendrier
-- **Limite** : qualité variable, à tester en réel
+### KBO + NPB (TheSportsDB, gratuit)
+- **API** : `https://www.thesportsdb.com/api/v1/json/123/`
+- **Clé** : `123` (free tier)
+- **Couverture** : équipes, joueurs, fixtures, résultats finaux
+- **Limite** : Pas de scores live (tier gratuit)
+- **Provider** : `TheSportsDBProvider`
 
-**Important** : abstraction dans le code pour changer de source facilement si besoin.
+### Scores Live KBO/NPB (Scraping, V1.5)
+- **Source** : `baseball24.com` via Playwright headless
+- **Couverture** : Scores en temps réel uniquement
+- **Fréquence** : Polling adaptatif (60s si match en cours, 10min sinon)
+- **Contraintes** : Plages horaires strictes (09h-22h KST/JST), délai 3-7s entre requêtes
+- **Provider** : `ScraperService`
+
+### Architecture DataProvider
 
 ```typescript
-// src/lib/data-sources/index.ts
-interface DataSource {
-  getScores(league: string, date: string): Promise<Game[]>
-  getStandings(league: string, season: number): Promise<Standing[]>
+// Unified Provider (100% gratuit)
+UnifiedProvider {
+  - MLBStatsProvider (MLB scores + stats)
+  - TheSportsDBProvider (KBO/NPB fixtures + résultats)
+  - ScraperService (KBO/NPB scores live) // V1.5
 }
-
-class MLBDataSource implements DataSource { /* statsapi.mlb.com */ }
-class KBODataSource implements DataSource { /* TheSportsDB */ }
-class NPBDataSource implements DataSource { /* TheSportsDB */ }
 ```
 
-### Cotes bookmakers (affiliation)
-- **Sources** : flux XML/JSON des programmes d'affiliation
-- **Opérateurs ANJ** : Betclic, Unibet, Winamax, PMU
-- **Fréquence** : fetch toutes les 15min
-- **Stockage** : table `odds` avec timestamp
+**Voir** : `/backend/src/services/data-provider/` et `/backend/src/services/scraper/`
 
-**TODO** : créer note pour demander accès aux flux (nécessite inscription programme affiliation).
+### Cotes bookmakers (affiliation)
+- **Sources** : Flux XML/JSON programmes d'affiliation (à configurer)
+- **Opérateurs ANJ** : Betclic, Unibet, Winamax, PMU
+- **Fréquence** : Fetch toutes les 15min
+- **Stockage** : Table `odds` avec timestamp
+
+**Action** : Inscription programmes affiliation après validation trafic V1.
 
 ---
 

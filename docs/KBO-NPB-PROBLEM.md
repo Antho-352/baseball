@@ -104,13 +104,70 @@ Sans source de données fiable pour KBO/NPB, on ne peut pas récupérer :
 2. Scraping NPB.jp (+ facile car version EN existe)
 3. Scraping KBO.com (+ complexe, nécessite traduction)
 
-## Décision requise
+## ✅ Solution retenue : API-Sports Baseball
 
-**Tu valides le plan "MLB-only V1, KBO/NPB V2" ?**
+**Date décision** : 2026-04-14
 
-Si oui, je mets à jour :
-- CLAUDE.md (retirer KBO/NPB des specs V1)
-- API-SOURCES.md (focus MLB uniquement)
-- Architecture URL (garder /kbo/ /npb/ mais pages "coming soon")
+**API** : https://api-sports.io/documentation/baseball/v1
 
-**OU tu veux que j'explore immédiatement le scraping KBO/NPB pour V1 ?**
+**Clé API** : `7ff379015c6a79e0adf959`
+
+---
+
+## ⚠️ Problème d'authentification (2026-04-15)
+
+### Symptômes
+
+Erreur sur tous les endpoints baseball :
+```json
+{
+  "errors": {
+    "token": "Error/Missing application key..."
+  }
+}
+```
+
+### User confirme
+
+"Apparement c'est la bonne API puisque il est indiqué que tu as consommé 2% de mon usage quotidien."
+
+→ La clé fonctionne mais probablement pas activée pour le sport "baseball".
+
+### Hypothèse principale
+
+API-Sports est multi-sports (football, basketball, baseball, etc.). Chaque sport nécessite peut-être une souscription séparée.
+
+**Action requise** : Vérifier dashboard API-Sports pour activer baseball.
+
+---
+
+## 🛠️ Implémentation terminée
+
+Code providers prêt (voir `/backend/src/services/data-provider/`) :
+
+- ✅ `APISportsProvider` (MLB + KBO + NPB)
+- ✅ `MLBStatsProvider` (MLB Stats API gratuite)
+- ✅ `HybridProvider` (combine les deux avec fallback auto)
+- ✅ Cache, mappers, types complets
+
+**Usage** :
+```typescript
+const provider = createDataProvider('hybrid');
+const games = await provider.getGamesWithFallback('mlb', new Date());
+```
+
+**Si API-Sports KBO/NPB fonctionne** → change 0 ligne de code, juste update les league IDs.
+
+**Si API-Sports bloqué** → fallback MLB Stats fonctionne déjà pour MLB.
+
+---
+
+## 📋 Prochaines actions
+
+1. **User** : Vérifier dashboard API-Sports (sports activés)
+2. **User** : Tester endpoint football pour confirmer clé valide
+3. **Décision** :
+   - **Si baseball activable rapidement** → attendre résolution, lancer avec 3 ligues
+   - **Si baseball payant/bloqué** → lancer MVP MLB-only, KBO/NPB en V2
+
+Voir détails complets dans `/docs/API-SPORTS-STATUS.md`.
