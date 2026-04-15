@@ -14,7 +14,7 @@ import NodeCache from 'node-cache';
 import { createDataProvider } from './services/data-provider/index.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3210;
 
 // Cache (TTL en secondes)
 const cache = new NodeCache({
@@ -24,7 +24,7 @@ const cache = new NodeCache({
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:4321', 'http://localhost:3000'],
+  origin: ['http://localhost:4321', 'http://localhost:3210'],
   credentials: true,
 }));
 app.use(express.json());
