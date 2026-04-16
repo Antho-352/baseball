@@ -154,24 +154,6 @@ const recentNews = [
     publishedAt: '2026-04-11',
     slug: 'judge-58-hr',
   },
-  {
-    id: '5',
-    title: 'NPB : Les Giants en tête du classement',
-    excerpt: 'Yomiuri creuse l\'écart avec 3 victoires d\'avance.',
-    category: 'News',
-    league: 'npb' as const,
-    publishedAt: '2026-04-10',
-    slug: 'npb-giants-tete',
-  },
-  {
-    id: '6',
-    title: 'Transfert surprise en KBO',
-    excerpt: 'Un joueur MLB rejoint la ligue coréenne pour la saison.',
-    category: 'Transferts',
-    league: 'kbo' as const,
-    publishedAt: '2026-04-09',
-    slug: 'transfert-kbo',
-  },
 ];
 
 const anjBookmakers = [
@@ -191,6 +173,24 @@ const anjBookmakers = [
     bonus: '100€ de paris gratuits',
   },
 ];
+
+const standings = {
+  mlb: [
+    { rank: 1, team: 'Dodgers', wins: 45, losses: 28, pct: '.616' },
+    { rank: 2, team: 'Yankees', wins: 43, losses: 30, pct: '.589' },
+    { rank: 3, team: 'Braves', wins: 41, losses: 32, pct: '.562' },
+  ],
+  kbo: [
+    { rank: 1, team: 'Bears', wins: 38, losses: 25, pct: '.603' },
+    { rank: 2, team: 'Twins', wins: 36, losses: 27, pct: '.571' },
+    { rank: 3, team: 'Heroes', wins: 34, losses: 29, pct: '.540' },
+  ],
+  npb: [
+    { rank: 1, team: 'Giants', wins: 42, losses: 26, pct: '.618' },
+    { rank: 2, team: 'Tigers', wins: 40, losses: 28, pct: '.588' },
+    { rank: 3, team: 'Swallows', wins: 38, losses: 30, pct: '.559' },
+  ],
+};
 ---
 
 <BaseLayout
@@ -270,38 +270,42 @@ const anjBookmakers = [
             <div class="pronostics-grid">
               <!-- Prono 1 -->
               <div class="prono-card">
-                <div class="prono-header">
-                  <div class="prono-match">
-                    <h3 class="prono-title">🇺🇸 MLB Yankees vs Dodgers</h3>
-                    <p class="prono-time">Aujourd'hui 20:05</p>
-                  </div>
-                  <span class="badge-confiance-high">CONFIANCE ÉLEVÉE</span>
-                </div>
+                <h3 class="prono-title">🇺🇸 MLB YANKEES VS DODGERS</h3>
+                <p class="prono-time">Aujourd'hui 20:05</p>
                 <p class="prono-excerpt">
                   Les Dodgers, portés par la forme olympique de Shohei Ohtani, partent favoris face à des Yankees affaiblis par les blessures.
                 </p>
-                <div class="prono-cote">
-                  <div class="cote-label">Cote</div>
-                  <div class="cote-value">1.85</div>
+                <div class="prono-cotes">
+                  <div class="cote-item">
+                    <span class="cote-team">Yankees</span>
+                    <span class="cote-value">1.85</span>
+                  </div>
+                  <span class="cote-separator">•</span>
+                  <div class="cote-item">
+                    <span class="cote-team">Dodgers</span>
+                    <span class="cote-value">2.10</span>
+                  </div>
                 </div>
                 <a href="/pronostics/mlb/yankees-dodgers/" class="btn-prono">Voir le pronostic</a>
               </div>
 
               <!-- Prono 2 -->
               <div class="prono-card">
-                <div class="prono-header">
-                  <div class="prono-match">
-                    <h3 class="prono-title">🇰🇷 KBO Bears vs Twins</h3>
-                    <p class="prono-time">Aujourd'hui 18:30</p>
-                  </div>
-                  <span class="badge-confiance-medium">VALEUR</span>
-                </div>
+                <h3 class="prono-title">🇰🇷 KBO BEARS VS TWINS</h3>
+                <p class="prono-time">Aujourd'hui 18:30</p>
                 <p class="prono-excerpt">
                   Les Doosan Bears enchaînent les victoires. Sur une série de 5 matchs gagnés, ils sont clairement supérieurs.
                 </p>
-                <div class="prono-cote">
-                  <div class="cote-label">Cote</div>
-                  <div class="cote-value">2.10</div>
+                <div class="prono-cotes">
+                  <div class="cote-item">
+                    <span class="cote-team">Bears</span>
+                    <span class="cote-value">1.95</span>
+                  </div>
+                  <span class="cote-separator">•</span>
+                  <div class="cote-item">
+                    <span class="cote-team">Twins</span>
+                    <span class="cote-value">1.88</span>
+                  </div>
                 </div>
                 <a href="/pronostics/kbo/bears-twins/" class="btn-prono">Voir le pronostic</a>
               </div>
@@ -326,50 +330,106 @@ const anjBookmakers = [
         <!-- Sidebar (25%) sticky -->
         <aside class="sidebar">
           <div class="sidebar-sticky">
-            <div class="sidebar-header">
-              <h3 class="sidebar-title">🔴 SCORES LIVE</h3>
-            </div>
+            <!-- Scores Live -->
+            <div class="sidebar-section">
+              <div class="sidebar-header">
+                <h3 class="sidebar-title">🔴 SCORES LIVE</h3>
+              </div>
 
-            <div class="sidebar-games">
-              {sidebarGames.map((game) => (
-                <div class="live-match-card">
-                  <div class="match-header">
-                    <span class={`league-badge ${game.league.toLowerCase()}`}>
-                      {game.league === 'MLB' && '🇺🇸 MLB'}
-                      {game.league === 'KBO' && '🇰🇷 KBO'}
-                      {game.league === 'NPB' && '🇯🇵 NPB'}
-                    </span>
-                    {game.status === 'live' && (
-                      <span class="live-badge">EN DIRECT</span>
+              <div class="sidebar-games">
+                {sidebarGames.map((game) => (
+                  <div class="live-match-card">
+                    <div class="match-header">
+                      <span class={`league-badge ${game.league.toLowerCase()}`}>
+                        {game.league === 'MLB' && '🇺🇸 MLB'}
+                        {game.league === 'KBO' && '🇰🇷 KBO'}
+                        {game.league === 'NPB' && '🇯🇵 NPB'}
+                      </span>
+                      {game.status === 'live' && (
+                        <span class="live-badge">EN DIRECT</span>
+                      )}
+                    </div>
+
+                    <div class="match-teams">
+                      <div class="team-row">
+                        <div class="team-info">
+                          <span class="team-logo">{game.awayTeam.substring(0, 3).toUpperCase()}</span>
+                          <span class="team-name">{game.awayTeam}</span>
+                        </div>
+                        <span class="team-score">{game.awayScore}</span>
+                      </div>
+
+                      <div class="team-row">
+                        <div class="team-info">
+                          <span class="team-logo">{game.homeTeam.substring(0, 3).toUpperCase()}</span>
+                          <span class="team-name">{game.homeTeam}</span>
+                        </div>
+                        <span class="team-score">{game.homeScore}</span>
+                      </div>
+                    </div>
+
+                    {game.inning && (
+                      <div class="match-status">{game.inning}</div>
                     )}
                   </div>
+                ))}
+              </div>
 
-                  <div class="match-teams">
-                    <div class="team-row">
-                      <div class="team-info">
-                        <span class="team-logo">{game.awayTeam.substring(0, 3).toUpperCase()}</span>
-                        <span class="team-name">{game.awayTeam}</span>
-                      </div>
-                      <span class="team-score">{game.awayScore}</span>
-                    </div>
-
-                    <div class="team-row">
-                      <div class="team-info">
-                        <span class="team-logo">{game.homeTeam.substring(0, 3).toUpperCase()}</span>
-                        <span class="team-name">{game.homeTeam}</span>
-                      </div>
-                      <span class="team-score">{game.homeScore}</span>
-                    </div>
-                  </div>
-
-                  {game.inning && (
-                    <div class="match-status">{game.inning}</div>
-                  )}
-                </div>
-              ))}
+              <a href="/scores/" class="sidebar-link">Voir tous les matchs →</a>
             </div>
 
-            <a href="/scores/" class="sidebar-link">Voir tous les matchs →</a>
+            <!-- Classements -->
+            <div class="sidebar-section">
+              <div class="sidebar-header">
+                <h3 class="sidebar-title">📊 CLASSEMENTS</h3>
+              </div>
+
+              <div class="standings-widget">
+                <!-- MLB -->
+                <div class="standings-league">
+                  <div class="standings-league-header">🇺🇸 MLB</div>
+                  <div class="standings-list">
+                    {standings.mlb.map((team) => (
+                      <div class="standings-row">
+                        <span class="standings-rank">{team.rank}</span>
+                        <span class="standings-team">{team.team}</span>
+                        <span class="standings-record">{team.wins}-{team.losses}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- KBO -->
+                <div class="standings-league">
+                  <div class="standings-league-header">🇰🇷 KBO</div>
+                  <div class="standings-list">
+                    {standings.kbo.map((team) => (
+                      <div class="standings-row">
+                        <span class="standings-rank">{team.rank}</span>
+                        <span class="standings-team">{team.team}</span>
+                        <span class="standings-record">{team.wins}-{team.losses}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- NPB -->
+                <div class="standings-league">
+                  <div class="standings-league-header">🇯🇵 NPB</div>
+                  <div class="standings-list">
+                    {standings.npb.map((team) => (
+                      <div class="standings-row">
+                        <span class="standings-rank">{team.rank}</span>
+                        <span class="standings-team">{team.team}</span>
+                        <span class="standings-record">{team.wins}-{team.losses}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <a href="/classements/" class="sidebar-link">Tous les classements →</a>
+            </div>
           </div>
         </aside>
       </div>
@@ -382,7 +442,7 @@ const anjBookmakers = [
 
 <style>
   .homepage-layout {
-    padding: 32px 0;
+    padding: 16px 0;
   }
 
   .layout-grid {
@@ -409,7 +469,7 @@ const anjBookmakers = [
 
   /* Hero */
   .hero-section {
-    padding: 48px 0 32px 0;
+    padding: 24px 0 16px 0;
     margin-bottom: 0;
   }
 
@@ -472,18 +532,18 @@ const anjBookmakers = [
 
   /* Sections */
   .section-news {
-    margin-top: 48px;
-    margin-bottom: 64px;
+    margin-top: 32px;
+    margin-bottom: 32px;
   }
 
   .section-pronostics {
-    margin-top: 64px;
-    margin-bottom: 48px;
+    margin-top: 32px;
+    margin-bottom: 32px;
   }
 
   .section-players {
-    margin-top: 48px;
-    margin-bottom: 64px;
+    margin-top: 32px;
+    margin-bottom: 32px;
   }
 
   .section-header {
@@ -543,7 +603,7 @@ const anjBookmakers = [
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: 20px;
+    padding: 16px;
     transition: all 0.3s ease;
   }
 
@@ -553,73 +613,48 @@ const anjBookmakers = [
     box-shadow: var(--shadow-md);
   }
 
-  .prono-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
-
-  .prono-match {
-    flex: 1;
-  }
-
   .prono-title {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: -0.3px;
     text-transform: uppercase;
     color: var(--color-text);
-    margin-bottom: var(--space-1);
+    margin-bottom: 4px;
   }
 
   .prono-time {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
-  }
-
-  .badge-confiance-high,
-  .badge-confiance-medium {
-    padding: 6px 12px;
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-radius: var(--radius-full);
-    white-space: nowrap;
-  }
-
-  .badge-confiance-high {
-    background-color: rgba(0, 255, 136, 0.12);
-    color: var(--color-green);
-  }
-
-  .badge-confiance-medium {
-    background-color: rgba(245, 158, 11, 0.12);
-    color: var(--color-gold);
+    margin-bottom: 12px;
   }
 
   .prono-excerpt {
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
-    line-height: var(--leading-relaxed);
-    margin-bottom: var(--space-4);
+    line-height: 1.5;
+    margin-bottom: 12px;
   }
 
-  .prono-cote {
+  .prono-cotes {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
     background-color: var(--color-surface-2);
     border-radius: var(--radius-md);
-    margin-bottom: var(--space-4);
+    margin-bottom: 12px;
   }
 
-  .cote-label {
+  .cote-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cote-team {
     font-size: var(--text-xs);
     font-weight: var(--font-semibold);
     text-transform: uppercase;
@@ -629,23 +664,29 @@ const anjBookmakers = [
 
   .cote-value {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
+    font-size: 20px;
     font-weight: 800;
     color: var(--color-text);
+  }
+
+  .cote-separator {
+    font-size: 20px;
+    color: var(--color-text-muted);
+    padding: 0 8px;
   }
 
   .btn-prono {
     display: block;
     width: 100%;
-    padding: 12px 24px;
+    padding: 10px 20px;
     font-family: var(--font-display);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: var(--font-semibold);
     text-transform: uppercase;
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
-    color: white;
+    color: white !important;
     background-color: var(--color-red);
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
@@ -683,10 +724,9 @@ const anjBookmakers = [
     transition: all 0.3s ease;
   }
 
-  /* Première card en vedette - 2 colonnes × 2 lignes */
+  /* Première card en vedette - full width */
   .news-card.news-featured {
-    grid-column: span 2;
-    grid-row: span 2;
+    grid-column: span 3;
   }
 
   .news-card.news-featured .news-image {
@@ -699,8 +739,13 @@ const anjBookmakers = [
 
   @media (max-width: 1024px) {
     .news-card.news-featured {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .news-card.news-featured {
       grid-column: span 1;
-      grid-row: span 1;
     }
 
     .news-card.news-featured .news-image {
@@ -809,19 +854,25 @@ const anjBookmakers = [
   .sidebar-sticky {
     position: sticky;
     top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sidebar-section {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: var(--space-5);
+    padding: 16px;
   }
 
   .sidebar-header {
-    margin-bottom: var(--space-4);
+    margin-bottom: 12px;
   }
 
   .sidebar-title {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: 16px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.02em;
@@ -831,15 +882,15 @@ const anjBookmakers = [
   .sidebar-games {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
   .sidebar-link {
     display: block;
-    padding: var(--space-2);
+    padding: 8px;
     font-family: var(--font-display);
-    font-size: var(--text-xs);
+    font-size: 10px;
     font-weight: var(--font-semibold);
     text-transform: uppercase;
     text-align: center;
@@ -853,12 +904,76 @@ const anjBookmakers = [
     color: var(--color-red);
   }
 
+  /* Classements widget */
+  .standings-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .standings-league {
+    background: var(--color-surface-2);
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .standings-league-header {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .standings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .standings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .standings-rank {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    min-width: 14px;
+  }
+
+  .standings-team {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-text);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .standings-record {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    font-size: 10px;
+  }
+
   /* Match cards compact pour sidebar */
   .live-match-card {
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    padding: 16px;
+    padding: 12px;
     transition: all 0.2s ease;
   }
 
@@ -871,12 +986,12 @@ const anjBookmakers = [
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .league-badge {
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: 10px;
+    padding: 3px 6px;
     border-radius: 4px;
     font-weight: 700;
     text-transform: uppercase;
@@ -900,9 +1015,9 @@ const anjBookmakers = [
   .live-badge {
     background: var(--color-red);
     color: white;
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 4px;
+    font-size: 9px;
+    padding: 3px 6px;
+    border-radius: 3px;
     font-weight: 700;
     text-transform: uppercase;
   }
@@ -910,7 +1025,7 @@ const anjBookmakers = [
   .match-teams {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .team-row {
@@ -922,14 +1037,14 @@ const anjBookmakers = [
   .team-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
     min-width: 0;
   }
 
   .team-logo {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -937,14 +1052,14 @@ const anjBookmakers = [
     align-items: center;
     justify-content: center;
     font-family: var(--font-display);
-    font-size: 8px;
+    font-size: 7px;
     font-weight: 800;
     color: var(--color-text);
     flex-shrink: 0;
   }
 
   .team-name {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--color-text);
     white-space: nowrap;
@@ -954,18 +1069,18 @@ const anjBookmakers = [
 
   .team-score {
     font-family: var(--font-display);
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     color: var(--color-text);
-    min-width: 32px;
+    min-width: 28px;
     text-align: right;
   }
 
   .match-status {
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 6px;
+    padding-top: 6px;
     border-top: 1px solid var(--color-border);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--color-text-muted);
     text-align: center;

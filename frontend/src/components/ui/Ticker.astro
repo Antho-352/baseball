@@ -53,7 +53,9 @@ const getLeagueColor = (league: string) => {
           class="ticker-league"
           style={`background-color: ${getLeagueColor(item.league)};`}
         >
-          {item.league.toUpperCase()}
+          {item.league === 'mlb' && '🇺🇸 MLB'}
+          {item.league === 'kbo' && '🇰🇷 KBO'}
+          {item.league === 'npb' && '🇯🇵 NPB'}
         </span>
 
         <span class="ticker-teams">
