@@ -209,7 +209,7 @@ const anjBookmakers = [
           <!-- Hero title -->
           <div class="hero-section">
             <h1 class="hero-title">
-              SCORES, STATS &<br>PRONOSTICS<br>BASEBALL
+              BASEBALL : ACTUALITÉS,<br>STATS & PRONOSTICS
             </h1>
             <p class="hero-subtitle">🇺🇸 MLB • 🇰🇷 KBO • 🇯🇵 NPB</p>
 
@@ -223,7 +223,44 @@ const anjBookmakers = [
             </div>
           </div>
 
-          <!-- Pronostics du jour -->
+          <!-- Actualités EN PREMIER (priorité éditoriale) -->
+          <section class="section-news">
+            <div class="section-header">
+              <h2 class="section-title">À LA UNE</h2>
+              <a href="/news/" class="section-link">Toutes les news →</a>
+            </div>
+
+            <div class="news-grid">
+              {recentNews.map((article, index) => (
+                <article class={`news-card ${index === 0 ? 'news-featured' : ''}`}>
+                  <a href={`/news/${article.slug}/`} class="news-link">
+                    <div class="news-image-wrapper">
+                      <img
+                        src={`/images/news/${article.slug}.jpg`}
+                        alt={article.title}
+                        class="news-image"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div class="news-content">
+                      <div class="news-category">
+                        {article.league === 'mlb' && '🇺🇸 MLB'}
+                        {article.league === 'kbo' && '🇰🇷 KBO'}
+                        {article.league === 'npb' && '🇯🇵 NPB'}
+                        <span class="category-sep">•</span>
+                        {article.category}
+                      </div>
+                      <h3 class="news-title">{article.title}</h3>
+                      <p class="news-excerpt">{article.excerpt}</p>
+                      <div class="news-date">{new Date(article.publishedAt).toLocaleDateString('fr-FR')}</div>
+                    </div>
+                  </a>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <!-- Pronostics EN SECOND (monétisation discrète) -->
           <section class="section-pronostics">
             <div class="section-header">
               <h2 class="section-title">PRONOSTICS <span>DU JOUR</span></h2>
@@ -268,43 +305,6 @@ const anjBookmakers = [
                 </div>
                 <a href="/pronostics/kbo/bears-twins/" class="btn-prono">Voir le pronostic</a>
               </div>
-            </div>
-          </section>
-
-          <!-- Actualités -->
-          <section class="section-news">
-            <div class="section-header">
-              <h2 class="section-title">ACTUALITÉS</h2>
-              <a href="/news/" class="section-link">Toutes les news →</a>
-            </div>
-
-            <div class="news-grid">
-              {recentNews.map((article) => (
-                <article class="news-card">
-                  <a href={`/news/${article.slug}/`} class="news-link">
-                    <div class="news-image-wrapper">
-                      <img
-                        src={`/images/news/${article.slug}.jpg`}
-                        alt={article.title}
-                        class="news-image"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div class="news-content">
-                      <div class="news-category">
-                        {article.league === 'mlb' && '🇺🇸 MLB'}
-                        {article.league === 'kbo' && '🇰🇷 KBO'}
-                        {article.league === 'npb' && '🇯🇵 NPB'}
-                        <span class="category-sep">•</span>
-                        {article.category}
-                      </div>
-                      <h3 class="news-title">{article.title}</h3>
-                      <p class="news-excerpt">{article.excerpt}</p>
-                      <div class="news-date">{new Date(article.publishedAt).toLocaleDateString('fr-FR')}</div>
-                    </div>
-                  </a>
-                </article>
-              ))}
             </div>
           </section>
 
@@ -415,20 +415,26 @@ const anjBookmakers = [
 
   .hero-title {
     font-family: var(--font-display);
-    font-size: 72px !important;
-    line-height: 1.1;
-    letter-spacing: -2px;
+    font-size: 56px !important;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
     font-weight: 900;
     background: linear-gradient(135deg, #e8102e 0%, #0052a5 50%, #e67e00 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: var(--space-4);
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-title {
+      font-size: 42px !important;
+    }
   }
 
   @media (max-width: 768px) {
     .hero-title {
-      font-size: 48px !important;
+      font-size: 36px !important;
     }
   }
 
@@ -465,11 +471,19 @@ const anjBookmakers = [
   }
 
   /* Sections */
-  .section-pronostics,
-  .section-news,
+  .section-news {
+    margin-top: 48px;
+    margin-bottom: 64px;
+  }
+
+  .section-pronostics {
+    margin-top: 64px;
+    margin-bottom: 48px;
+  }
+
   .section-players {
     margin-top: 48px;
-    margin-bottom: 48px;
+    margin-bottom: 64px;
   }
 
   .section-header {
@@ -486,6 +500,11 @@ const anjBookmakers = [
     letter-spacing: -0.5px;
     text-transform: uppercase;
     color: var(--color-text);
+  }
+
+  .section-news .section-title {
+    font-size: 40px;
+    margin-bottom: 32px;
   }
 
   .section-title span {
@@ -511,7 +530,7 @@ const anjBookmakers = [
   .pronostics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
+    gap: 20px;
   }
 
   @media (max-width: 768px) {
@@ -524,7 +543,7 @@ const anjBookmakers = [
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     transition: all 0.3s ease;
   }
 
@@ -548,7 +567,7 @@ const anjBookmakers = [
 
   .prono-title {
     font-family: var(--font-display);
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.3px;
     text-transform: uppercase;
@@ -563,9 +582,9 @@ const anjBookmakers = [
 
   .badge-confiance-high,
   .badge-confiance-medium {
-    padding: 4px 12px;
+    padding: 6px 12px;
     font-family: var(--font-display);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -641,7 +660,7 @@ const anjBookmakers = [
   .news-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
+    gap: 24px;
   }
 
   @media (max-width: 1024px) {
@@ -662,6 +681,35 @@ const anjBookmakers = [
     border-radius: 12px;
     overflow: hidden;
     transition: all 0.3s ease;
+  }
+
+  /* Première card en vedette - 2 colonnes × 2 lignes */
+  .news-card.news-featured {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .news-card.news-featured .news-image {
+    height: 300px;
+  }
+
+  .news-card.news-featured .news-title {
+    font-size: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .news-card.news-featured {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+
+    .news-card.news-featured .news-image {
+      height: 200px;
+    }
+
+    .news-card.news-featured .news-title {
+      font-size: 18px;
+    }
   }
 
   .news-card:hover {

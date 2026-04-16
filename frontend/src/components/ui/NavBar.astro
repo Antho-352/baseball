@@ -158,19 +158,14 @@ const isActive = (href: string) => {
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
-    background-color: var(--color-bg);
-    backdrop-filter: blur(var(--blur-lg));
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    background: transparent !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  @supports (backdrop-filter: blur(12px)) {
+  @supports (backdrop-filter: blur(10px)) {
     .navbar {
-      background-color: rgba(var(--color-bg-rgb, 255, 255, 255), var(--backdrop-opacity));
-    }
-
-    [data-theme="dark"] .navbar {
-      background-color: rgba(8, 13, 20, 0.8);
+      background: rgba(15, 23, 42, 0.7) !important;
     }
   }
 
