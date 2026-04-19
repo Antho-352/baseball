@@ -1,0 +1,626 @@
+---
+/**
+ * Article Detail Page
+ * Dynamic route for news/analysis/history articles
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getBookmakerLogo } from '@lib/constants/logos';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+
+  return articles.map(article => ({
+    params: { slug: article.slug },
+    props: { article }
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+const publishedDate = new Date(article.data.publishedAt);
+const categoryLabels = {
+  'news': 'Actualité',
+  'analysis': 'Analyse',
+  'history': 'Histoire',
+  'transfers': 'Transferts',
+  'injuries': 'Blessures'
+};
+
+const leagueLabels = {
+  'mlb': 'MLB',
+  'kbo': 'KBO',
+  'npb': 'NPB',
+  'all': 'Multi-Ligues'
+};
+
+const title = article.data.title;
+const description = article.data.description;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <article class="article-layout">
+      <!-- Article Header -->
+      <header class="article-header">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+          <a href="/">Accueil</a>
+          <span>›</span>
+          <a href="/news/">News</a>
+          <span>›</span>
+          {article.data.league && article.data.league !== 'all' && (
+            <>
+              <a href={`/news/${article.data.league}/`}>{leagueLabels[article.data.league]}</a>
+              <span>›</span>
+            </>
+          )}
+          <span>{categoryLabels[article.data.category]}</span>
+        </nav>
+
+        <!-- Meta -->
+        <div class="article-meta">
+          <span class="article-category">{categoryLabels[article.data.category]}</span>
+          {article.data.league && (
+            <span class="article-league" style={`background: var(--color-${article.data.league === 'mlb' ? 'primary' : article.data.league === 'kbo' ? 'blue' : 'orange'})`}>
+              {leagueLabels[article.data.league]}
+            </span>
+          )}
+        </div>
+
+        <!-- Title -->
+        <h1 class="article-title">{article.data.title}</h1>
+
+        <!-- Description -->
+        <p class="article-description">{article.data.description}</p>
+
+        <!-- Info bar -->
+        <div class="article-info">
+          <div class="article-author">
+            <span class="author-avatar">✍️</span>
+            <span class="author-name">{article.data.author}</span>
+          </div>
+          <div class="article-date">
+            <span class="date-icon">📅</span>
+            <time datetime={article.data.publishedAt}>
+              {publishedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </time>
+          </div>
+        </div>
+
+        <!-- Featured Image -->
+        {article.data.featuredImage && (
+          <div class="article-featured-image">
+            <img
+              src={article.data.featuredImage}
+              alt={article.data.title}
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        )}
+      </header>
+
+      <!-- Article Content -->
+      <div class="article-content">
+        <Content />
+      </div>
+
+      <!-- Tags -->
+      {article.data.tags && article.data.tags.length > 0 && (
+        <footer class="article-footer">
+          <div class="article-tags">
+            <span class="tags-label">Tags :</span>
+            {article.data.tags.map(tag => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </footer>
+      )}
+
+      <!-- Related Articles -->
+      {article.data.relatedArticles && article.data.relatedArticles.length > 0 && (
+        <aside class="related-articles">
+          <h2 class="related-title">Articles similaires</h2>
+          <div class="related-grid">
+            {article.data.relatedArticles.slice(0, 3).map(slug => (
+              <a href={`/news/${slug}/`} class="related-card">
+                <div class="related-card-content">
+                  <span class="related-card-title">{slug.replace(/-/g, ' ')}</span>
+                  <span class="related-card-cta">Lire l'article →</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </aside>
+      )}
+    </article>
+
+    <!-- Sidebar -->
+    <aside class="article-sidebar">
+      <!-- Bookmakers Widget -->
+      <div class="widget bookmakers-widget">
+        <h3 class="widget-title">Paris Sportifs Baseball</h3>
+        <div class="widget-content">
+          <p class="widget-intro">Pariez sur vos équipes favorites :</p>
+          <div class="bookmakers-list">
+            <a href="/paris-sportifs/betclic/" class="bookmaker-item" rel="nofollow sponsored">
+              <img src={getBookmakerLogo('betclic')} alt="Betclic" class="bookmaker-logo" />
+              <div class="bookmaker-info">
+                <strong>Betclic</strong>
+                <span class="bookmaker-bonus">100€ remboursés</span>
+              </div>
+            </a>
+            <a href="/paris-sportifs/unibet/" class="bookmaker-item" rel="nofollow sponsored">
+              <img src={getBookmakerLogo('unibet')} alt="Unibet" class="bookmaker-logo" />
+              <div class="bookmaker-info">
+                <strong>Unibet</strong>
+                <span class="bookmaker-bonus">100€ offerts</span>
+              </div>
+            </a>
+            <a href="/paris-sportifs/winamax/" class="bookmaker-item" rel="nofollow sponsored">
+              <img src={getBookmakerLogo('winamax')} alt="Winamax" class="bookmaker-logo" />
+              <div class="bookmaker-info">
+                <strong>Winamax</strong>
+                <span class="bookmaker-bonus">100€ CASH</span>
+              </div>
+            </a>
+          </div>
+          <p class="widget-disclaimer">18+ | Jouer comporte des risques</p>
+        </div>
+      </div>
+
+      <!-- Latest News -->
+      <div class="widget">
+        <h3 class="widget-title">Dernières Actualités</h3>
+        <div class="widget-content">
+          <p class="widget-empty">Autres articles à venir...</p>
+        </div>
+      </div>
+
+      <!-- Pronostics Widget -->
+      <div class="widget">
+        <h3 class="widget-title">🎯 Pronostics du jour</h3>
+        <div class="widget-content">
+          <a href="/pronostics/" class="prono-cta">
+            Voir tous les pronostics →
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-6);
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  /* Article Header */
+  .article-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .article-category,
+  .article-league {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-full);
+    color: white;
+  }
+
+  .article-category {
+    background: var(--color-secondary);
+  }
+
+  .article-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    line-height: 1.2;
+  }
+
+  .article-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-4);
+  }
+
+  .article-author,
+  .article-date {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .author-avatar,
+  .date-icon {
+    font-size: var(--text-lg);
+  }
+
+  .author-name {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .article-featured-image {
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .article-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Article Content */
+  .article-content {
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .article-content :global(h2) {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .article-content :global(h3) {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+  }
+
+  .article-content :global(p) {
+    margin-bottom: var(--space-4);
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-left: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+
+  .article-content :global(li) {
+    margin-bottom: var(--space-2);
+  }
+
+  .article-content :global(blockquote) {
+    padding: var(--space-4);
+    margin: var(--space-4) 0;
+    background: var(--color-surface);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+
+  .article-content :global(table) {
+    width: 100%;
+    margin: var(--space-4) 0;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .article-content :global(th) {
+    padding: var(--space-3);
+    background: var(--color-surface-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    text-align: left;
+    color: var(--color-text);
+  }
+
+  .article-content :global(td) {
+    padding: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+  }
+
+  .article-content :global(strong) {
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+  }
+
+  .article-content :global(a) {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .article-content :global(a:hover) {
+    color: var(--color-secondary);
+  }
+
+  /* Footer */
+  .article-footer {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--color-border);
+  }
+
+  .article-tags {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .tags-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-muted);
+  }
+
+  .tag {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+  }
+
+  /* Related Articles */
+  .related-articles {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .related-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .related-card {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .related-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .related-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .related-card-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    text-transform: capitalize;
+  }
+
+  .related-card-cta {
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+  }
+
+  /* Sidebar */
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .widget {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+  }
+
+  .bookmakers-widget {
+    background: linear-gradient(135deg, rgba(232, 16, 46, 0.05) 0%, rgba(0, 82, 165, 0.05) 100%);
+    border: 2px solid var(--color-primary);
+  }
+
+  .widget-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .widget-content {
+    font-size: var(--text-sm);
+  }
+
+  .widget-intro {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .bookmakers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .bookmaker-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .bookmaker-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .bookmaker-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .bookmaker-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .bookmaker-info strong {
+    font-size: 13px;
+    color: var(--color-text);
+  }
+
+  .bookmaker-bonus {
+    font-size: 11px;
+    color: var(--color-success);
+    font-weight: var(--font-bold);
+  }
+
+  .widget-disclaimer {
+    font-size: 10px;
+    color: var(--color-text-faint);
+    text-align: center;
+    margin-top: var(--space-2);
+  }
+
+  .widget-empty {
+    padding: var(--space-4);
+    text-align: center;
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  .prono-cta {
+    display: block;
+    padding: var(--space-3);
+    background: var(--color-primary);
+    color: white;
+    text-align: center;
+    font-size: 13px;
+    font-weight: var(--font-semibold);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+
+  .prono-cta:hover {
+    background: var(--color-secondary);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+
+    .article-sidebar {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: var(--space-4) var(--space-3);
+    }
+
+    .article-title {
+      font-size: var(--text-3xl);
+    }
+
+    .article-description {
+      font-size: var(--text-base);
+    }
+
+    .article-content :global(h2) {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

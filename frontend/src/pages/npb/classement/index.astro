@@ -1,0 +1,152 @@
+---
+/**
+ * NPB Standings Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Mock standings
+const centralLeague = [
+  { rank: 1, team: 'Yomiuri Giants', wins: 48, losses: 25, pct: 0.658, gb: 0 },
+  { rank: 2, team: 'Hanshin Tigers', wins: 45, losses: 28, pct: 0.616, gb: 3.0 },
+  { rank: 3, team: 'Chunichi Dragons', wins: 42, losses: 31, pct: 0.575, gb: 6.0 },
+  { rank: 4, team: 'Hiroshima Toyo Carp', wins: 39, losses: 34, pct: 0.534, gb: 9.0 },
+  { rank: 5, team: 'Tokyo Yakult Swallows', wins: 36, losses: 37, pct: 0.493, gb: 12.0 },
+  { rank: 6, team: 'Yokohama DeNA BayStars', wins: 32, losses: 41, pct: 0.438, gb: 16.0 },
+];
+
+const pacificLeague = [
+  { rank: 1, team: 'Fukuoka SoftBank Hawks', wins: 50, losses: 23, pct: 0.685, gb: 0 },
+  { rank: 2, team: 'Orix Buffaloes', wins: 46, losses: 27, pct: 0.630, gb: 4.0 },
+  { rank: 3, team: 'Saitama Seibu Lions', wins: 43, losses: 30, pct: 0.589, gb: 7.0 },
+  { rank: 4, team: 'Chiba Lotte Marines', wins: 40, losses: 33, pct: 0.548, gb: 10.0 },
+  { rank: 5, team: 'Tohoku Rakuten Golden Eagles', wins: 35, losses: 38, pct: 0.479, gb: 15.0 },
+  { rank: 6, team: 'Hokkaido Nippon-Ham Fighters', wins: 30, losses: 43, pct: 0.411, gb: 20.0 },
+];
+
+const title = 'Classement NPB 2026 : Central & Pacific League';
+const description = 'Classements complets NPB 2026 : Central League et Pacific League, victoires, défaites et statistiques.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Classement NPB 2026</h1>
+      <p class="page-description">Central League et Pacific League</p>
+    </header>
+
+    <section class="league-section">
+      <h2 class="league-title">Central League</h2>
+      <div class="standings-wrapper">
+        <table class="standings-table">
+          <thead>
+            <tr><th>#</th><th>Équipe</th><th>V</th><th>D</th><th>%</th><th>GB</th></tr>
+          </thead>
+          <tbody>
+            {centralLeague.map(team => (
+              <tr>
+                <td>{team.rank}</td>
+                <td><strong>{team.team}</strong></td>
+                <td>{team.wins}</td>
+                <td>{team.losses}</td>
+                <td>{team.pct.toFixed(3)}</td>
+                <td>{team.gb === 0 ? '-' : team.gb}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="league-section">
+      <h2 class="league-title">Pacific League</h2>
+      <div class="standings-wrapper">
+        <table class="standings-table">
+          <thead>
+            <tr><th>#</th><th>Équipe</th><th>V</th><th>D</th><th>%</th><th>GB</th></tr>
+          </thead>
+          <tbody>
+            {pacificLeague.map(team => (
+              <tr>
+                <td>{team.rank}</td>
+                <td><strong>{team.team}</strong></td>
+                <td>{team.wins}</td>
+                <td>{team.losses}</td>
+                <td>{team.pct.toFixed(3)}</td>
+                <td>{team.gb === 0 ? '-' : team.gb}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="info-box">
+      <p><strong>Note:</strong> Classements mis à jour quotidiennement via TheSportsDB API.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-6);
+    text-align: center;
+  }
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .league-section {
+    margin-bottom: var(--space-8);
+  }
+  .league-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+  .standings-wrapper {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .standings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .standings-table thead {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+  }
+  .standings-table th {
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    text-align: left;
+  }
+  .standings-table td {
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .standings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .standings-table tbody tr:hover {
+    background: var(--color-bg);
+  }
+  .info-box {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

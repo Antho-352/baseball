@@ -1,0 +1,122 @@
+---
+/**
+ * Payment Methods Table Component
+ * Displays payment options in a structured table
+ */
+
+interface PaymentMethod {
+  method: string;
+  min: number;
+  max: number;
+  fees: string;
+  delay: string;
+}
+
+interface Props {
+  methods: PaymentMethod[];
+}
+
+const { methods } = Astro.props;
+---
+
+<div class="payment-methods-table">
+  <table class="methods-table">
+    <thead>
+      <tr>
+        <th>Méthode</th>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Frais</th>
+        <th>Délai</th>
+      </tr>
+    </thead>
+    <tbody>
+      {methods.map(method => (
+        <tr>
+          <td class="method-name">{method.method}</td>
+          <td class="method-amount">{method.min}€</td>
+          <td class="method-amount">{method.max}€</td>
+          <td class="method-fees">{method.fees}</td>
+          <td class="method-delay">{method.delay}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .payment-methods-table {
+    overflow-x: auto;
+  }
+
+  .methods-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .methods-table thead {
+    background: var(--color-surface-2);
+  }
+
+  .methods-table th {
+    padding: var(--space-2);
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .methods-table th:nth-child(2),
+  .methods-table th:nth-child(3),
+  .methods-table th:nth-child(4),
+  .methods-table th:nth-child(5) {
+    text-align: center;
+  }
+
+  .methods-table td {
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  .methods-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .methods-table tbody tr:hover {
+    background: var(--color-surface-2);
+  }
+
+  .method-name {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .method-amount,
+  .method-fees,
+  .method-delay {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .method-fees {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 640px) {
+    .methods-table {
+      font-size: 11px;
+    }
+
+    .methods-table th,
+    .methods-table td {
+      padding: 6px;
+    }
+  }
+</style>

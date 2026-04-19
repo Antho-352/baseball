@@ -1,0 +1,78 @@
+---
+/**
+ * KBO Stats Hub
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const title = 'Statistiques KBO - Leaders et Records | home-run.fr';
+const description = 'Statistiques complètes de la KBO : meilleurs batteurs, lanceurs, records et classements statistiques.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">📊 Statistiques KBO</h1>
+      <p class="page-description">Leaders statistiques de la Korean Baseball Organization</p>
+    </header>
+
+    <div class="stats-grid">
+      <a href="/kbo/stats/batteurs/" class="stat-category-card">
+        <div class="card-icon">🏏</div>
+        <h2 class="card-title">Batteurs</h2>
+        <p class="card-description">Moyenne, Home Runs, RBI, Hits, Stolen Bases</p>
+        <span class="card-cta">Voir les stats →</span>
+      </a>
+
+      <a href="/kbo/stats/lanceurs/" class="stat-category-card">
+        <div class="card-icon">⚡</div>
+        <h2 class="card-title">Lanceurs</h2>
+        <p class="card-description">ERA, Victoires, Strikeouts, Saves, WHIP</p>
+        <span class="card-cta">Voir les stats →</span>
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container { max-width: 1400px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+  .page-header { margin-bottom: var(--space-6); text-align: center; }
+  .page-title { font-family: var(--font-display); font-size: var(--text-4xl); font-weight: var(--font-extrabold); color: var(--color-text); margin-bottom: var(--space-3); }
+  .page-description { font-size: var(--text-lg); color: var(--color-text-muted); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); }
+  .stat-category-card { 
+    background: var(--color-surface); 
+    border: 2px solid var(--color-border); 
+    border-radius: var(--radius-lg); 
+    padding: var(--space-6); 
+    text-align: center; 
+    text-decoration: none; 
+    transition: all var(--transition-base);
+  }
+  .stat-category-card:hover { 
+    border-color: var(--color-primary); 
+    transform: translateY(-4px); 
+    box-shadow: var(--shadow-lg); 
+  }
+  .card-icon { font-size: 64px; margin-bottom: var(--space-4); }
+  .card-title { 
+    font-family: var(--font-display); 
+    font-size: var(--text-2xl); 
+    font-weight: var(--font-bold); 
+    color: var(--color-text); 
+    margin-bottom: var(--space-3); 
+  }
+  .card-description { 
+    font-size: var(--text-base); 
+    color: var(--color-text-muted); 
+    margin-bottom: var(--space-4); 
+    line-height: 1.6; 
+  }
+  .card-cta { 
+    display: inline-block; 
+    padding: var(--space-2) var(--space-4); 
+    background: var(--color-primary); 
+    color: white; 
+    font-weight: var(--font-semibold); 
+    border-radius: var(--radius-md); 
+  }
+</style>

@@ -70,8 +70,8 @@ if (startTime) {
 }
 
 // Determine leading team
-const homeLeading = homeScore !== null && awayScore !== null && homeScore > awayScore;
-const awayLeading = homeScore !== null && awayScore !== null && awayScore > homeScore;
+const homeLeading = typeof homeScore === 'number' && typeof awayScore === 'number' && homeScore > awayScore;
+const awayLeading = typeof homeScore === 'number' && typeof awayScore === 'number' && awayScore > homeScore;
 
 // Get team abbreviations (first 3 chars uppercase)
 const homeAbbrev = homeTeam.substring(0, 3).toUpperCase();

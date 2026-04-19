@@ -75,30 +75,25 @@ const leagueColors: Record<string, string> = {
           <th>V</th>
           <th>D</th>
           <th>%</th>
-          {showGB && <th>GB</th>}
+          <th style={showGB ? '' : 'display: none'}>GB</th>
         </tr>
       </thead>
       <tbody>
-        {standings.map((team) => {
-          const isHighlighted = team.rank <= highlightTop;
-          const teamAbbrev = team.teamName.substring(0, 3).toUpperCase();
-
-          return (
-            <tr>
-              <td>
-                <span class="st-rank">{team.rank}</span>
-                <span class="st-team-logo" style={`background: ${leagueColors[league]}`}>
-                  {teamAbbrev}
-                </span>
-                <span class="st-team">{team.teamName}</span>
-              </td>
-              <td class="st-w">{team.wins}</td>
-              <td>{team.losses}</td>
-              <td class="st-pct">{formatPct(team.pct)}</td>
-              {showGB && <td class="st-gb">{formatGB(team.gb)}</td>}
-            </tr>
-          );
-        })}
+        {standings.map((team) => (
+          <tr>
+            <td>
+              <span class="st-rank">{team.rank}</span>
+              <span class="st-team-logo" style={`background: ${leagueColors[league]}`}>
+                {team.teamName.substring(0, 3).toUpperCase()}
+              </span>
+              <span class="st-team">{team.teamName}</span>
+            </td>
+            <td class="st-w">{team.wins}</td>
+            <td>{team.losses}</td>
+            <td class="st-pct">{formatPct(team.pct)}</td>
+            <td class="st-gb" style={showGB ? '' : 'display: none'}>{formatGB(team.gb)}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   </div>

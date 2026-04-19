@@ -49,8 +49,8 @@ const {
 } = Astro.props;
 
 // Déterminer le gagnant (si match terminé)
-const homeWins = status === 'final' && homeScore !== null && awayScore !== null && homeScore > awayScore;
-const awayWins = status === 'final' && homeScore !== null && awayScore !== null && awayScore > homeScore;
+const homeWins = status === 'final' && typeof homeScore === 'number' && typeof awayScore === 'number' && homeScore > awayScore;
+const awayWins = status === 'final' && typeof homeScore === 'number' && typeof awayScore === 'number' && awayScore > homeScore;
 
 // Badge status mapping
 const badgeStatus = {

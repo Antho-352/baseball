@@ -37,6 +37,8 @@
 
   --color-bg: #ffffff;             /* Background principal */
   --color-surface: #f9fafb;        /* Gray-50 - Cards, sections */
+  --color-surface-2: #f3f4f6;      /* Gray-100 - Nested surfaces */
+  --color-surface-3: #e5e7eb;      /* Gray-200 - Deep nested */
   --color-surface-hover: #f3f4f6;  /* Gray-100 - Hover cards */
 
   --color-border: #e5e7eb;         /* Gray-200 - Bordures */
@@ -45,7 +47,11 @@
   --color-text: #111827;           /* Gray-900 - Texte principal */
   --color-text-secondary: #374151; /* Gray-700 - Texte secondaire */
   --color-text-muted: #6b7280;     /* Gray-500 - Texte atténué */
+  --color-text-faint: #9ca3af;     /* Gray-400 - Very muted */
   --color-text-disabled: #9ca3af;  /* Gray-400 - Disabled state */
+
+  --color-red: #dc2626;            /* Red-600 - Highlights */
+  --color-green: #16a34a;          /* Green-600 - Bonus/success */
 
   /* ==================
      COLORS - STATUS
@@ -274,6 +280,8 @@
 
   --color-bg: #080d14;             /* Deep navy (mockup base) */
   --color-surface: #0e1623;        /* Surface/cards (mockup) */
+  --color-surface-2: #1a2332;      /* Nested surfaces */
+  --color-surface-3: #242f42;      /* Deep nested */
   --color-surface-hover: #1a2332;  /* Hover state */
 
   --color-border: rgba(255, 255, 255, 0.07);  /* Subtle borders */
@@ -282,7 +290,11 @@
   --color-text: #f8fafc;           /* Bright text */
   --color-text-secondary: #cbd5e1; /* Slate-300 */
   --color-text-muted: #94a3b8;     /* Slate-400 */
+  --color-text-faint: #64748b;     /* Slate-500 - Very muted */
   --color-text-disabled: #64748b;  /* Slate-500 */
+
+  --color-red: #ef4444;            /* Red-500 - Highlights */
+  --color-green: #22c55e;          /* Green-500 - Bonus/success */
 
   /* ==================
      COLORS - STATUS

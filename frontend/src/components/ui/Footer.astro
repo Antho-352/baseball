@@ -1,184 +1,269 @@
 ---
 /**
- * Footer Component - Design System compliant
- *
- * Footer avec mentions ANJ obligatoires
+ * Footer Component
+ * Includes ANJ legal warnings and site navigation
  */
 
 const currentYear = new Date().getFullYear();
 
-const footerColumns = [
-  {
-    title: 'MLB',
-    links: [
-      { name: 'Équipes', href: '/mlb/equipes/' },
-      { name: 'Joueurs', href: '/mlb/joueurs/' },
-      { name: 'Scores', href: '/mlb/scores/' },
-      { name: 'Classement', href: '/mlb/classement/' },
-      { name: 'Stats', href: '/mlb/stats/' },
-    ],
-  },
-  {
-    title: 'KBO',
-    links: [
-      { name: 'Équipes', href: '/kbo/equipes/' },
-      { name: 'Joueurs', href: '/kbo/joueurs/' },
-      { name: 'Scores', href: '/kbo/scores/' },
-      { name: 'Classement', href: '/kbo/classement/' },
-    ],
-  },
-  {
-    title: 'NPB',
-    links: [
-      { name: 'Équipes', href: '/npb/equipes/' },
-      { name: 'Joueurs', href: '/npb/joueurs/' },
-      { name: 'Scores', href: '/npb/scores/' },
-      { name: 'Classement', href: '/npb/classement/' },
-    ],
-  },
-  {
-    title: 'Infos',
-    links: [
-      { name: 'Pronostics', href: '/pronostics/' },
-      { name: 'News', href: '/news/' },
-      { name: 'Histoire', href: '/histoire/' },
-      { name: 'À propos', href: '/a-propos/' },
-      { name: 'Contact', href: '/contact/' },
-    ],
-  },
-];
+const footerLinks = {
+  baseball: [
+    { name: 'MLB', href: '/mlb/' },
+    { name: 'KBO', href: '/kbo/' },
+    { name: 'NPB', href: '/npb/' },
+    { name: 'Pronostics', href: '/pronostics/' },
+  ],
+  legal: [
+    { name: 'Mentions légales', href: '/mentions-legales/' },
+    { name: 'Politique de confidentialité', href: '/politique-confidentialite/' },
+    { name: 'Conditions d\'utilisation', href: '/conditions-utilisation/' },
+    { name: 'Contact', href: '/contact/' },
+  ],
+  bookmakers: [
+    { name: 'Betclic', href: '/paris-sportifs/betclic/' },
+    { name: 'Unibet', href: '/paris-sportifs/unibet/' },
+    { name: 'Winamax', href: '/paris-sportifs/winamax/' },
+    { name: 'PMU', href: '/paris-sportifs/pmu/' },
+  ],
+  resources: [
+    { name: 'News', href: '/news/' },
+    { name: 'Calendrier', href: '/mlb/calendrier/' },
+    { name: 'Classements', href: '/mlb/classement/' },
+    { name: 'Stats', href: '/mlb/stats/batteurs/' },
+  ],
+};
 ---
 
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <!-- Brand -->
-      <div class="footer-brand">
-        <div class="logo">
-          <span class="logo-icon">⚾</span>
-          <span class="logo-text">home-run<span>.fr</span></span>
+<footer class="footer">
+  <!-- ANJ Warning Banner -->
+  <div class="anj-warning">
+    <div class="container">
+      <div class="anj-content">
+        <div class="anj-icon">⚠️</div>
+        <div class="anj-text">
+          <p class="anj-main">
+            <strong>Jeu responsable :</strong> Les jeux d'argent sont interdits aux mineurs.
+            Jouer comporte des risques : endettement, dépendance...
+          </p>
+          <p class="anj-help">
+            <strong>Pour obtenir de l'aide :</strong>
+            <a href="https://www.joueurs-info-service.fr/" target="_blank" rel="noopener">joueurs-info-service.fr</a>
+            | <a href="tel:0974751313">09 74 75 13 13</a> (appel non surtaxé)
+          </p>
         </div>
-        <p>
-          La référence française du baseball professionnel. MLB, KBO et NPB couverts en temps réel.
-        </p>
       </div>
+    </div>
+  </div>
 
-      <!-- Navigation columns -->
-      {footerColumns.map((column) => (
-        <div>
-          <div class="footer-col-title">{column.title}</div>
+  <!-- Main Footer -->
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- About Section -->
+        <div class="footer-column">
+          <div class="footer-brand">
+            <span class="brand-icon">⚾</span>
+            <span class="brand-name">home-run.fr</span>
+          </div>
+          <p class="footer-description">
+            Votre référence française pour le baseball professionnel : MLB, KBO, NPB.
+            Scores en direct, statistiques, pronostics et actualités.
+          </p>
+          <div class="age-restriction">
+            <div class="age-badge">18+</div>
+            <span>Réservé aux adultes</span>
+          </div>
+        </div>
+
+        <!-- Baseball Links -->
+        <div class="footer-column">
+          <h3 class="footer-title">Baseball</h3>
           <ul class="footer-links">
-            {column.links.map((link) => (
+            {footerLinks.baseball.map(link => (
               <li><a href={link.href}>{link.name}</a></li>
             ))}
           </ul>
         </div>
-      ))}
+
+        <!-- Resources Links -->
+        <div class="footer-column">
+          <h3 class="footer-title">Ressources</h3>
+          <ul class="footer-links">
+            {footerLinks.resources.map(link => (
+              <li><a href={link.href}>{link.name}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Bookmakers Links -->
+        <div class="footer-column">
+          <h3 class="footer-title">Paris sportifs</h3>
+          <ul class="footer-links">
+            {footerLinks.bookmakers.map(link => (
+              <li>
+                <a href={link.href} rel="nofollow sponsored">{link.name}</a>
+              </li>
+            ))}
+          </ul>
+          <p class="footer-note">Opérateurs agréés ANJ</p>
+        </div>
+
+        <!-- Legal Links -->
+        <div class="footer-column">
+          <h3 class="footer-title">Légal</h3>
+          <ul class="footer-links">
+            {footerLinks.legal.map(link => (
+              <li><a href={link.href}>{link.name}</a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="footer-bottom">
-      <!-- Mentions légales ANJ (OBLIGATOIRE) -->
-      <p class="footer-legal">
-        home-run.fr est un site d'information sur le baseball professionnel.
-        Les pronostics publiés sont à titre indicatif et ne constituent en aucun cas une incitation au jeu.
-        Jouer comporte des risques : endettement, dépendance... Appelez le 09 74 75 13 13 (appel non surtaxé).
-        <strong>18+</strong>. Les jeux d'argent sont interdits aux mineurs.
-        Tous les opérateurs d'affiliation présentés sur ce site sont agréés par l'ANJ.
-        <a href="https://www.jeu-responsable.fr" target="_blank" rel="noopener noreferrer" style="color:var(--color-red)">
-          jeu-responsable.fr
-        </a>
-      </p>
-
-      <div class="footer-meta">
-        © {currentYear} home-run.fr • Tous droits réservés •
-        <a href="/mentions-legales/">Mentions légales</a> •
-        <a href="/confidentialite/">Confidentialité</a>
+  <!-- Footer Bottom -->
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-content">
+        <p class="copyright">
+          © {currentYear} home-run.fr - Tous droits réservés
+        </p>
+        <p class="disclaimer">
+          Les cotes et informations sont fournies à titre indicatif uniquement.
+          Nous ne sommes pas responsables des pertes liées aux paris sportifs.
+        </p>
       </div>
     </div>
   </div>
 </footer>
 
 <style>
-  footer {
-    background-color: var(--color-surface);
+  .footer {
+    background: var(--color-surface);
     border-top: 1px solid var(--color-border);
-    margin-top: var(--space-20);
-    padding: var(--space-16) 0 var(--space-8);
+    margin-top: auto;
+  }
+
+  /* ANJ Warning */
+  .anj-warning {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border-bottom: 2px solid var(--color-error);
+    padding: var(--space-4) 0;
+  }
+
+  .anj-content {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .anj-icon {
+    font-size: var(--text-3xl);
+    flex-shrink: 0;
+  }
+
+  .anj-text {
+    flex: 1;
+  }
+
+  .anj-main {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+    line-height: 1.6;
+  }
+
+  .anj-help {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .anj-help a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: var(--font-semibold);
+  }
+
+  .anj-help a:hover {
+    color: var(--color-secondary);
+  }
+
+  /* Main Footer */
+  .footer-main {
+    padding: var(--space-12) 0;
   }
 
   .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr repeat(4, 1fr);
     gap: var(--space-8);
-    margin-bottom: var(--space-12);
   }
 
-  @media (max-width: 1024px) {
-    .footer-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
   }
 
-  @media (max-width: 640px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Brand */
   .footer-brand {
-    padding-right: var(--space-4);
-  }
-
-  .logo {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin-bottom: var(--space-4);
-  }
-
-  .logo-icon {
-    font-size: var(--text-2xl);
-  }
-
-  .logo-text {
     font-family: var(--font-display);
     font-size: var(--text-xl);
     font-weight: var(--font-extrabold);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--color-text);
+    margin-bottom: var(--space-2);
   }
 
-  .logo-text span {
-    color: var(--color-red);
+  .brand-icon {
+    font-size: var(--text-2xl);
   }
 
-  .footer-brand p {
+  .footer-description {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
-    line-height: var(--leading-relaxed);
+    line-height: 1.6;
+    margin-bottom: var(--space-3);
   }
 
-  /* Columns */
-  .footer-col-title {
-    font-family: var(--font-display);
+  .age-restriction {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .age-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-error);
+    color: white;
     font-weight: var(--font-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: var(--text-sm);
+    border-radius: var(--radius-md);
+  }
+
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
     color: var(--color-text);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-2);
   }
 
   .footer-links {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-
-  .footer-links li {
-    margin-bottom: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
   }
 
   .footer-links a {
@@ -189,44 +274,76 @@ const footerColumns = [
   }
 
   .footer-links a:hover {
-    color: var(--color-red);
+    color: var(--color-primary);
   }
 
-  /* Bottom */
-  .footer-bottom {
-    padding-top: var(--space-8);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .footer-legal {
-    font-size: 10px;
-    color: var(--color-text-faint);
-    line-height: 1.6;
-    max-width: 80ch;
-    margin-bottom: var(--space-4);
-  }
-
-  .footer-legal a {
-    text-decoration: underline;
-    transition: opacity var(--transition-base);
-  }
-
-  .footer-legal a:hover {
-    opacity: 0.8;
-  }
-
-  .footer-meta {
+  .footer-note {
     font-size: var(--text-xs);
     color: var(--color-text-muted);
+    font-style: italic;
+    margin-top: var(--space-2);
   }
 
-  .footer-meta a {
+  /* Footer Bottom */
+  .footer-bottom {
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4) 0;
+  }
+
+  .footer-bottom-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  .copyright {
+    font-size: var(--text-sm);
     color: var(--color-text-muted);
-    text-decoration: none;
-    transition: color var(--transition-base);
   }
 
-  .footer-meta a:hover {
-    color: var(--color-red);
+  .disclaimer {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-column:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .anj-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .footer-main {
+      padding: var(--space-8) 0;
+    }
+
+    .footer-brand {
+      justify-content: center;
+    }
+
+    .footer-description {
+      text-align: center;
+    }
+
+    .age-restriction {
+      justify-content: center;
+    }
   }
 </style>

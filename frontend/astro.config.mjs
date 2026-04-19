@@ -18,6 +18,9 @@ export default defineConfig({
   site: 'https://home-run.fr',
   trailingSlash: 'always',
   compressHTML: true,
+  image: {
+    domains: ['www.mlbstatic.com', 'www.thesportsdb.com'],
+  },
   vite: {
     build: {
       cssMinify: 'lightningcss',

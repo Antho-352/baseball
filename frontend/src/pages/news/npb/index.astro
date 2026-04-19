@@ -1,0 +1,69 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allArticles = await getCollection('articles');
+const npbArticles = allArticles
+  .filter(a => a.data.league === 'npb')
+  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
+
+const title = 'Actualités NPB : News Nippon Professional Baseball | home-run.fr';
+const description = 'Toutes les actualités de la Nippon Professional Baseball (NPB) : résultats, transferts, analyses en français.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">🇯🇵 Actualités NPB</h1>
+      <p class="page-description">Dernières news de la Nippon Professional Baseball</p>
+      <div class="back-link">
+        <a href="/news/">← Toutes les actualités</a>
+      </div>
+    </header>
+
+    {npbArticles.length > 0 ? (
+      <div class="articles-grid">
+        {npbArticles.map(article => (
+          <article class="article-card">
+            {article.data.featuredImage && (
+              <div class="article-image">
+                <img src={article.data.featuredImage} alt={article.data.title} loading="lazy" />
+              </div>
+            )}
+            <div class="article-content">
+              <h3 class="article-title">
+                <a href={`/news/${article.slug}/`}>{article.data.title}</a>
+              </h3>
+              <p class="article-excerpt">{article.data.description}</p>
+              <span class="article-date">
+                {new Date(article.data.publishedAt).toLocaleDateString('fr-FR')}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>Aucun article NPB disponible pour le moment.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .container { max-width: 1400px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+  .page-header { margin-bottom: var(--space-6); text-align: center; }
+  .page-title { font-size: var(--text-4xl); font-weight: var(--font-extrabold); color: var(--color-text); margin-bottom: var(--space-3); }
+  .page-description { font-size: var(--text-lg); color: var(--color-text-muted); margin-bottom: var(--space-3); }
+  .back-link a { color: var(--color-primary); text-decoration: none; }
+  .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-4); }
+  .article-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; }
+  .article-image { height: 200px; }
+  .article-image img { width: 100%; height: 100%; object-fit: cover; }
+  .article-content { padding: var(--space-4); }
+  .article-title { font-size: var(--text-lg); font-weight: var(--font-bold); margin-bottom: var(--space-2); }
+  .article-title a { color: var(--color-text); text-decoration: none; }
+  .article-excerpt { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+  .article-date { font-size: var(--text-xs); color: var(--color-text-faint); }
+  .empty-state { padding: var(--space-8); text-align: center; color: var(--color-text-muted); }
+</style>

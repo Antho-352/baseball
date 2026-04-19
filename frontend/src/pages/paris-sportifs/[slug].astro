@@ -1,0 +1,655 @@
+---
+/**
+ * Page Bookmaker - Template Affiliation
+ *
+ * SSG - Données issues du CMS custom
+ * Architecture: 70% main + 30% sidebar sticky
+ * Critical for monetization
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ResponsibleGamblingNotice from '@components/ui/ResponsibleGamblingNotice.astro';
+import RatingsGrid from '@components/bookmaker/RatingsGrid.astro';
+import PaymentMethodsTable from '@components/bookmaker/PaymentMethodsTable.astro';
+import ProsConsBlock from '@components/bookmaker/ProsConsBlock.astro';
+import { getBookmakerLogo } from '@lib/constants/logos';
+
+// Generate static paths for all bookmakers from content collection
+export async function getStaticPaths() {
+  const bookmakers = await getCollection('bookmakers');
+  return bookmakers.map(bookmaker => ({
+    params: { slug: bookmaker.slug },
+    props: { bookmaker },
+  }));
+}
+
+const { bookmaker } = Astro.props;
+const { Content } = await bookmaker.render();
+const data = bookmaker.data;
+
+// CTA URLs (affiliate links)
+const ctaUrl = `/aff/${bookmaker.slug}`;
+
+// Top 3 alternatives bookmakers
+const alternatives = [
+  { slug: 'unibet', name: 'Unibet', logo: getBookmakerLogo('unibet'), rating: 8.2, bonus: '150€ offerts', url: '/paris-sportifs/unibet/' },
+  { slug: 'winamax', name: 'Winamax', logo: getBookmakerLogo('winamax'), rating: 8.0, bonus: '100€ remboursés', url: '/paris-sportifs/winamax/' },
+  { slug: 'pmu', name: 'PMU', logo: getBookmakerLogo('pmu'), rating: 7.8, bonus: '100€ offerts', url: '/paris-sportifs/pmu/' },
+];
+---
+
+<BaseLayout
+  title={`${data.name} Avis 2026 : Bonus, Cotes et Test Complet | home-run.fr`}
+  description={`Avis complet sur ${data.name} pour parier sur le baseball. Bonus ${data.bonusHeadline}, analyse des cotes MLB/KBO/NPB, méthodes de paiement et test détaillé.`}
+>
+  <div class="bookmaker-page">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="/">Accueil</a> / <a href="/paris-sportifs/">Paris Sportifs</a> / <span>{data.name}</span>
+      </nav>
+
+      <!-- Header with rating and CTA -->
+      <header class="bookmaker-header">
+        <div class="header-content">
+          <div class="header-logo">
+            <img src={getBookmakerLogo(bookmaker.slug)} alt={`Logo ${data.name}`} class="logo-icon" width="80" height="80" />
+          </div>
+          <div class="header-info">
+            <h1 class="header-title">{data.name}</h1>
+            <div class="header-meta">
+              <div class="rating-badge">
+                <span class="rating-value">{data.globalRating}</span>
+                <span class="rating-max">/10</span>
+              </div>
+              <div class="bonus-highlight">
+                <span class="bonus-icon">🎁</span>
+                <span class="bonus-text">{data.bonusHeadline}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="header-cta">
+          <a href={ctaUrl} class="cta-button cta-primary" target="_blank" rel="nofollow sponsored">
+            <span class="cta-text">S'inscrire sur {data.name}</span>
+            {data.bonusCode && <span class="cta-code">Code: {data.bonusCode}</span>}
+          </a>
+          <p class="cta-terms">Dépôt min: {data.minDeposit}€ · Licence ANJ {data.anjLicenseSport}</p>
+        </div>
+      </header>
+
+      <!-- Layout 70/30 -->
+      <div class="bookmaker-layout">
+        <!-- Main content (70%) -->
+        <main class="bookmaker-main">
+          <!-- Pros/Cons -->
+          <ProsConsBlock pros={data.pros} cons={data.cons} />
+
+          <!-- Ratings Grid -->
+          <section class="section-block">
+            <h2 class="section-title">📊 Notation détaillée</h2>
+            <RatingsGrid ratings={data.ratings} />
+          </section>
+
+          <!-- Markdown editorial content -->
+          <article class="rich-text editorial-content">
+            <Content />
+          </article>
+
+          <!-- Payment methods -->
+          <section class="section-block">
+            <h2 class="section-title">💳 Méthodes de paiement</h2>
+            <PaymentMethodsTable methods={data.paymentMethods} />
+          </section>
+
+          <!-- Sports offered -->
+          <section class="section-block">
+            <h2 class="section-title">⚾ Sports disponibles</h2>
+            <ul class="simple-list">
+              {data.sportsOffered.map(sport => <li>{sport}</li>)}
+            </ul>
+          </section>
+
+          <!-- Legal notice -->
+          <ResponsibleGamblingNotice variant="footer" />
+        </main>
+
+        <!-- Sidebar (30%) -->
+        <aside class="bookmaker-sidebar">
+          <div class="sidebar-sticky">
+            <!-- Sticky CTA -->
+            <div class="widget sidebar-cta">
+              <h3 class="widget-title">🎯 S'inscrire</h3>
+              <div class="cta-content">
+                <div class="cta-bonus">{data.bonusHeadline}</div>
+                <a href={ctaUrl} class="cta-button cta-primary" target="_blank" rel="nofollow sponsored">
+                  Ouvrir un compte
+                </a>
+                <div class="cta-features">
+                  <span class="feature">✓ Inscription rapide (5 min)</span>
+                  <span class="feature">✓ Dépôt min: {data.minDeposit}€</span>
+                  <span class="feature">✓ Paiements sécurisés</span>
+                </div>
+              </div>
+              <ResponsibleGamblingNotice variant="inline" />
+            </div>
+
+            <!-- Top 3 alternatives -->
+            <div class="widget alternatives-widget">
+              <h3 class="widget-title">🔄 Alternatives</h3>
+              <div class="alternatives-list">
+                {alternatives.map(alt => (
+                  <a href={alt.url} class="alt-item">
+                    <img src={alt.logo} alt={`Logo ${alt.name}`} class="alt-logo" width="32" height="32" />
+                    <div class="alt-info">
+                      <div class="alt-name">{alt.name}</div>
+                      <div class="alt-rating">⭐ {alt.rating}/10</div>
+                      <div class="alt-bonus">{alt.bonus}</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Container */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    padding: var(--space-3) 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-primary);
+  }
+
+  /* Header */
+  .bookmaker-header {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .bookmaker-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+  }
+
+  .header-title {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .rating-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 4px 10px;
+    background: var(--color-success);
+    border-radius: var(--radius-md);
+  }
+
+  .rating-value {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
+  }
+
+  .rating-max {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .bonus-highlight {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .bonus-icon {
+    font-size: 18px;
+  }
+
+  /* CTA */
+  .header-cta {
+    flex-shrink: 0;
+    min-width: 250px;
+  }
+
+  .cta-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all var(--transition-base);
+    text-align: center;
+  }
+
+  .cta-primary {
+    background: linear-gradient(135deg, var(--color-red) 0%, var(--color-primary) 100%);
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .cta-text {
+    font-size: 16px;
+  }
+
+  .cta-code {
+    font-size: 12px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+  }
+
+  .cta-terms {
+    margin-top: var(--space-2);
+    font-size: 10px;
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  /* Layout 70/30 */
+  .bookmaker-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .bookmaker-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Main content */
+  .bookmaker-main {
+    min-width: 0;
+  }
+
+  .section-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .subsection-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Rich Text */
+  .rich-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  .rich-text h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .rich-text h3 {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .rich-text h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-1);
+  }
+
+  .rich-text p {
+    margin-bottom: var(--space-2);
+  }
+
+  .rich-text ol,
+  .rich-text ul {
+    margin-left: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .rich-text li {
+    margin-bottom: 4px;
+  }
+
+  .rich-text strong {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .rich-text a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-base);
+  }
+
+  .rich-text a:hover {
+    color: var(--color-secondary);
+    text-decoration: underline;
+  }
+
+  .rich-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-3) 0;
+    font-size: 13px;
+  }
+
+  .rich-text th,
+  .rich-text td {
+    padding: 8px;
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .rich-text th {
+    background: var(--color-surface-2);
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  /* Editorial Content (markdown body) */
+  .editorial-content {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  /* App ratings */
+  .app-ratings {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .app-badge {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .app-badge:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+
+  .app-platform {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .app-rating {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .app-reviews {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  /* Grid 2 columns */
+  .grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .grid-2col {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .simple-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .simple-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 13px;
+    color: var(--color-text-muted);
+  }
+
+  .simple-list li:last-child {
+    border-bottom: none;
+  }
+
+  /* Sidebar */
+  .bookmaker-sidebar {
+    position: relative;
+  }
+
+  .sidebar-sticky {
+    position: sticky;
+    top: 80px;
+  }
+
+  @media (max-width: 1024px) {
+    .sidebar-sticky {
+      position: static;
+    }
+  }
+
+  /* Widgets */
+  .widget {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .widget-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Sticky CTA widget */
+  .sidebar-cta {
+    background: linear-gradient(135deg, rgba(232, 16, 46, 0.05) 0%, rgba(0, 82, 165, 0.05) 100%);
+    border: 2px solid var(--color-primary);
+  }
+
+  .cta-content {
+    margin-bottom: var(--space-2);
+  }
+
+  .cta-bonus {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-success);
+    text-align: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .cta-features {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: var(--space-2);
+  }
+
+  .feature {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  /* Alternatives widget */
+  .alternatives-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .alt-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .alt-item:hover {
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+  }
+
+  .alt-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+  }
+
+  .alt-info {
+    flex: 1;
+  }
+
+  .alt-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 2px;
+  }
+
+  .alt-rating {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+  }
+
+  .alt-bonus {
+    font-size: 11px;
+    color: var(--color-success);
+    font-weight: 600;
+  }
+</style>

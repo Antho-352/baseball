@@ -1,0 +1,117 @@
+---
+/**
+ * KBO Scores Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getKBOLogo } from '@lib/constants/logos';
+
+// Mock scores - will be from TheSportsDB API
+const mockGames = [
+  { id: '1', homeTeam: 'SSG Landers', awayTeam: 'LG Twins', homeScore: 5, awayScore: 3, status: 'final' },
+  { id: '2', homeTeam: 'KIA Tigers', awayTeam: 'Samsung Lions', homeScore: 2, awayScore: 4, status: 'final' },
+];
+
+const title = 'Scores KBO en direct : Résultats et matchs en cours';
+const description = 'Scores KBO en temps réel : résultats, matchs en direct et calendrier de la Korean Baseball Organization.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Scores KBO</h1>
+      <p class="page-description">Résultats et matchs en direct</p>
+    </header>
+
+    <div class="scores-container">
+      {mockGames.map((game) => (
+        <div class="game-card">
+          <div class="game-teams">
+            <div class="team">
+              <img src={getKBOLogo(game.awayTeam)} alt={game.awayTeam} />
+              <span class="team-name">{game.awayTeam}</span>
+              <span class="score">{game.awayScore}</span>
+            </div>
+            <div class="team">
+              <img src={getKBOLogo(game.homeTeam)} alt={game.homeTeam} />
+              <span class="team-name">{game.homeTeam}</span>
+              <span class="score">{game.homeScore}</span>
+            </div>
+          </div>
+          <div class="game-status">
+            {game.status === 'final' ? 'Final' : 'En cours'}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="info-box">
+      <p><strong>Note:</strong> Les scores en direct KBO seront intégrés via TheSportsDB API dans une prochaine version.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-6);
+    text-align: center;
+  }
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .scores-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+  .game-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+  }
+  .game-teams {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .team {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .team img {
+    width: 40px;
+    height: 40px;
+  }
+  .team-name {
+    flex: 1;
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+  .score {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+  }
+  .game-status {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+  .info-box {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

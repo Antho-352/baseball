@@ -1,0 +1,460 @@
+---
+/**
+ * Pronostics Hub Page
+ * Main predictions page for all leagues
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getMLBLogo, getKBOLogo, getNPBLogo } from '@lib/constants/logos';
+
+// Mock data - will be replaced with DB query
+const mockPredictions = [
+  {
+    id: '1',
+    league: 'mlb',
+    date: '2026-04-15',
+    homeTeam: 'New York Yankees',
+    awayTeam: 'Boston Red Sox',
+    homeTeamId: 147,
+    awayTeamId: 111,
+    prediction: 'Yankees',
+    confidence: 75,
+    slug: '2026-04-15-yankees-vs-red-sox'
+  },
+  {
+    id: '2',
+    league: 'mlb',
+    date: '2026-04-15',
+    homeTeam: 'Los Angeles Dodgers',
+    awayTeam: 'San Francisco Giants',
+    homeTeamId: 119,
+    awayTeamId: 137,
+    prediction: 'Dodgers',
+    confidence: 68,
+    slug: '2026-04-15-dodgers-vs-giants'
+  },
+];
+
+const title = 'Pronostics Baseball : MLB, KBO, NPB - Prédictions et Analyses';
+const description = 'Pronostics baseball gratuits pour MLB, KBO et NPB. Analyses détaillées, statistiques et prédictions pour parier sur le baseball en toute confiance.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <h1 class="page-title">Pronostics Baseball</h1>
+      <p class="page-description">
+        Analyses et prédictions pour MLB, KBO et NPB
+      </p>
+    </header>
+
+    <!-- ANJ Warning -->
+    <div class="warning-box">
+      <div class="warning-icon">⚠️</div>
+      <div class="warning-content">
+        <strong>Jeu responsable :</strong> Jouer comporte des risques : endettement, dépendance...
+        Pour obtenir de l'aide : <a href="https://www.joueurs-info-service.fr/" target="_blank" rel="noopener">joueurs-info-service.fr</a> | 09 74 75 13 13
+      </div>
+    </div>
+
+    <!-- League Tabs -->
+    <div class="league-tabs">
+      <a href="/pronostics/" class="league-tab league-tab--active">
+        Tous
+      </a>
+      <a href="/pronostics/mlb/" class="league-tab">
+        🇺🇸 MLB
+      </a>
+      <a href="/pronostics/kbo/" class="league-tab">
+        🇰🇷 KBO
+      </a>
+      <a href="/pronostics/npb/" class="league-tab">
+        🇯🇵 NPB
+      </a>
+    </div>
+
+    <!-- Predictions List -->
+    <div class="predictions-list">
+      {mockPredictions.length > 0 ? (
+        mockPredictions.map((prediction) => (
+          <a href={`/pronostics/${prediction.league}/${prediction.slug}/`} class="prediction-card">
+            <div class="prediction-header">
+              <span class="prediction-league">{prediction.league.toUpperCase()}</span>
+              <span class="prediction-date">
+                {new Date(prediction.date).toLocaleDateString('fr-FR', {
+                  weekday: 'short',
+                  day: 'numeric',
+                  month: 'short'
+                })}
+              </span>
+            </div>
+
+            <div class="prediction-matchup">
+              <div class="prediction-team">
+                <img
+                  src={getMLBLogo(prediction.awayTeamId)}
+                  alt={prediction.awayTeam}
+                  class="team-logo"
+                />
+                <span class="team-name">{prediction.awayTeam}</span>
+              </div>
+
+              <div class="prediction-vs">VS</div>
+
+              <div class="prediction-team">
+                <img
+                  src={getMLBLogo(prediction.homeTeamId)}
+                  alt={prediction.homeTeam}
+                  class="team-logo"
+                />
+                <span class="team-name">{prediction.homeTeam}</span>
+              </div>
+            </div>
+
+            <div class="prediction-footer">
+              <div class="prediction-pick">
+                <span class="pick-label">Notre choix :</span>
+                <span class="pick-value">{prediction.prediction}</span>
+              </div>
+              <div class="prediction-confidence">
+                <span class="confidence-label">Confiance :</span>
+                <div class="confidence-bar">
+                  <div
+                    class="confidence-fill"
+                    style={`width: ${prediction.confidence}%`}
+                  ></div>
+                </div>
+                <span class="confidence-value">{prediction.confidence}%</span>
+              </div>
+            </div>
+          </a>
+        ))
+      ) : (
+        <div class="no-predictions">
+          <p>Aucun pronostic disponible pour le moment.</p>
+          <p class="no-predictions-sub">Les pronostics du jour seront publiés à 10h00.</p>
+        </div>
+      )}
+    </div>
+
+    <!-- CTA Bookmakers -->
+    <section class="bookmakers-cta">
+      <h2 class="cta-title">Meilleurs sites pour parier sur le baseball</h2>
+      <div class="bookmakers-grid">
+        <a href="/paris-sportifs/betclic/" class="bookmaker-cta-card">
+          <strong>Betclic</strong>
+          <span class="cta-bonus">Premier pari remboursé jusqu'à 100€</span>
+        </a>
+        <a href="/paris-sportifs/unibet/" class="bookmaker-cta-card">
+          <strong>Unibet</strong>
+          <span class="cta-bonus">100€ remboursés en crédits de jeu</span>
+        </a>
+        <a href="/paris-sportifs/winamax/" class="bookmaker-cta-card">
+          <strong>Winamax</strong>
+          <span class="cta-bonus">100€ de bonus CASH direct</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-6);
+    text-align: center;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  .warning-box {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border: 2px solid var(--color-error);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+  }
+
+  .warning-icon {
+    font-size: var(--text-2xl);
+  }
+
+  .warning-content {
+    flex: 1;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+  }
+
+  .warning-content a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .league-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2);
+  }
+
+  .league-tab {
+    flex: 1;
+    padding: var(--space-3);
+    text-align: center;
+    font-weight: var(--font-semibold);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+
+  .league-tab:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .league-tab--active {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .predictions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .prediction-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .prediction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+  }
+
+  .prediction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .prediction-league {
+    padding: 2px 8px;
+    background: var(--color-primary);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+  }
+
+  .prediction-date {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-transform: capitalize;
+  }
+
+  .prediction-matchup {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .prediction-team {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .team-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .team-name {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .prediction-vs {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-text-muted);
+  }
+
+  .prediction-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .prediction-pick {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .pick-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .pick-value {
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+  }
+
+  .prediction-confidence {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .confidence-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .confidence-bar {
+    width: 100px;
+    height: 8px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%);
+    transition: width var(--transition-base);
+  }
+
+  .confidence-value {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+  }
+
+  .no-predictions {
+    padding: var(--space-12);
+    text-align: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .no-predictions p {
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .no-predictions-sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .bookmakers-cta {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    text-align: center;
+  }
+
+  .bookmakers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .bookmaker-cta-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    text-align: center;
+    transition: all var(--transition-base);
+  }
+
+  .bookmaker-cta-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+  }
+
+  .bookmaker-cta-card strong {
+    font-size: var(--text-lg);
+    color: var(--color-text);
+  }
+
+  .cta-bonus {
+    font-size: var(--text-sm);
+    color: var(--color-success);
+    font-weight: var(--font-semibold);
+  }
+
+  @media (max-width: 768px) {
+    .prediction-matchup {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .prediction-vs {
+      display: none;
+    }
+
+    .bookmakers-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .league-tabs {
+      flex-wrap: wrap;
+    }
+  }
+</style>

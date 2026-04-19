@@ -1,0 +1,372 @@
+---
+/**
+ * NPB Players List Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Mock NPB star players - will be from API later
+const npbPlayers = [
+  // Yomiuri Giants
+  { name: 'Kazuma Okamoto', team: 'Yomiuri Giants', position: '1B', avg: '.295', hr: 39, rbi: 102 },
+  { name: 'Tomoyuki Sugano', team: 'Yomiuri Giants', position: 'SP', era: '2.45', wins: 15, so: 156 },
+
+  // Hanshin Tigers
+  { name: 'Koji Chikamoto', team: 'Hanshin Tigers', position: 'OF', avg: '.315', hr: 8, rbi: 54, sb: 28 },
+  { name: 'Yuki Nishi', team: 'Hanshin Tigers', position: 'SP', era: '2.68', wins: 12, so: 142 },
+
+  // Orix Buffaloes
+  { name: 'Masataka Yoshida', team: 'Orix Buffaloes', position: 'OF', avg: '.335', hr: 21, rbi: 88 },
+  { name: 'Yoshinobu Yamamoto', team: 'Orix Buffaloes', position: 'SP', era: '1.82', wins: 18, so: 205 },
+
+  // Fukuoka SoftBank Hawks
+  { name: 'Yuki Yanagita', team: 'Fukuoka SoftBank Hawks', position: 'OF', avg: '.318', hr: 28, rbi: 95 },
+
+  // Yakult Swallows
+  { name: 'Munetaka Murakami', team: 'Yakult Swallows', position: '3B', avg: '.305', hr: 56, rbi: 134 },
+
+  // Hiroshima Toyo Carp
+  { name: 'Seiya Suzuki', team: 'Hiroshima Toyo Carp', position: 'OF', avg: '.317', hr: 38, rbi: 88 },
+
+  // Chiba Lotte Marines
+  { name: 'Roki Sasaki', team: 'Chiba Lotte Marines', position: 'SP', era: '2.02', wins: 11, so: 209 },
+];
+
+const title = 'Joueurs NPB - Stars et Statistiques | home-run.fr';
+const description = 'Découvrez les meilleurs joueurs de la Nippon Professional Baseball (NPB) : statistiques, profils et performances des stars japonaises.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-content">
+        <div class="header-icon">🇯🇵</div>
+        <div>
+          <h1 class="page-title">Joueurs NPB</h1>
+          <p class="page-description">
+            Stars et meilleurs joueurs de la Nippon Professional Baseball
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-group">
+        <label for="league-filter">Ligue</label>
+        <select id="league-filter" class="filter-select">
+          <option value="all">Toutes</option>
+          <option value="Central">Central League</option>
+          <option value="Pacific">Pacific League</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="position-filter">Position</label>
+        <select id="position-filter" class="filter-select">
+          <option value="all">Toutes</option>
+          <option value="C">Receveur (C)</option>
+          <option value="1B">1ère base (1B)</option>
+          <option value="2B">2e base (2B)</option>
+          <option value="3B">3e base (3B)</option>
+          <option value="SS">Arrêt-court (SS)</option>
+          <option value="OF">Voltigeur (OF)</option>
+          <option value="DH">Frappeur désigné (DH)</option>
+          <option value="SP">Lanceur partant (SP)</option>
+          <option value="RP">Lanceur de relève (RP)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Players Grid -->
+    <section class="players-grid">
+      {npbPlayers.map(player => (
+        <div class="player-card">
+          <div class="player-header">
+            <div class="player-avatar">{player.position}</div>
+            <div class="player-info">
+              <h3 class="player-name">{player.name}</h3>
+              <div class="player-meta">
+                <span class="player-team">{player.team}</span>
+                <span class="player-position">{player.position}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-stats">
+            {player.avg && (
+              <div class="stat-item">
+                <span class="stat-label">AVG</span>
+                <span class="stat-value">{player.avg}</span>
+              </div>
+            )}
+            {player.hr && (
+              <div class="stat-item">
+                <span class="stat-label">HR</span>
+                <span class="stat-value">{player.hr}</span>
+              </div>
+            )}
+            {player.rbi && (
+              <div class="stat-item">
+                <span class="stat-label">RBI</span>
+                <span class="stat-value">{player.rbi}</span>
+              </div>
+            )}
+            {player.sb && (
+              <div class="stat-item">
+                <span class="stat-label">SB</span>
+                <span class="stat-value">{player.sb}</span>
+              </div>
+            )}
+            {player.era && (
+              <div class="stat-item">
+                <span class="stat-label">ERA</span>
+                <span class="stat-value">{player.era}</span>
+              </div>
+            )}
+            {player.wins && (
+              <div class="stat-item">
+                <span class="stat-label">W</span>
+                <span class="stat-value">{player.wins}</span>
+              </div>
+            )}
+            {player.so && (
+              <div class="stat-item">
+                <span class="stat-label">SO</span>
+                <span class="stat-value">{player.so}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- Info Note -->
+    <section class="info-note">
+      <p>
+        <strong>Note :</strong> Cette liste présente les principaux joueurs stars de la NPB.
+        Les statistiques sont indicatives et seront mises à jour régulièrement.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  /* Page Header */
+  .page-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .header-icon {
+    font-size: 64px;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .filter-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .filter-group label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .filter-select {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    font-family: inherit;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  /* Players Grid */
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .player-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    transition: all var(--transition-base);
+  }
+
+  .player-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .player-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .player-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #e67e00 0%, #ff9933 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .player-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .player-name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-meta {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .player-team {
+    font-weight: var(--font-semibold);
+  }
+
+  .player-position {
+    padding: 2px 6px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Player Stats */
+  .player-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+  }
+
+  /* Info Note */
+  .info-note {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .info-note strong {
+    color: var(--color-text);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+
+    .filters {
+      flex-direction: column;
+    }
+
+    .players-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .player-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

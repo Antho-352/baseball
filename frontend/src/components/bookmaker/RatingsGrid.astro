@@ -1,0 +1,150 @@
+---
+/**
+ * Ratings Grid Component
+ * Displays detailed ratings for different categories
+ */
+
+interface Props {
+  ratings: {
+    live: number;
+    mobile: number;
+    odds: number;
+    payments: number;
+    support: number;
+  };
+}
+
+const { ratings } = Astro.props;
+
+const categories = [
+  { key: 'live', label: 'Paris en direct', icon: '🔴' },
+  { key: 'mobile', label: 'Application mobile', icon: '📱' },
+  { key: 'odds', label: 'Qualité des cotes', icon: '💰' },
+  { key: 'payments', label: 'Paiements', icon: '💳' },
+  { key: 'support', label: 'Service client', icon: '💬' },
+];
+
+// Get color based on rating
+const getRatingColor = (rating: number): string => {
+  if (rating >= 8.5) return 'var(--color-success)';
+  if (rating >= 7.0) return '#d4af37'; // Gold
+  if (rating >= 5.5) return 'var(--color-warning)';
+  return 'var(--color-error)';
+};
+
+// Get rating label
+const getRatingLabel = (rating: number): string => {
+  if (rating >= 9.0) return 'Excellent';
+  if (rating >= 8.0) return 'Très bon';
+  if (rating >= 7.0) return 'Bon';
+  if (rating >= 6.0) return 'Correct';
+  return 'Insuffisant';
+};
+---
+
+<div class="ratings-grid">
+  {categories.map(category => {
+    const rating = ratings[category.key as keyof typeof ratings];
+    const color = getRatingColor(rating);
+    const label = getRatingLabel(rating);
+
+    return (
+      <div class="rating-item">
+        <div class="rating-header">
+          <span class="rating-icon">{category.icon}</span>
+          <span class="rating-label">{category.label}</span>
+        </div>
+        <div class="rating-bar-container">
+          <div class="rating-bar-bg">
+            <div
+              class="rating-bar-fill"
+              style={`width: ${(rating / 10) * 100}%; background: ${color};`}
+            ></div>
+          </div>
+          <div class="rating-value" style={`color: ${color};`}>
+            {rating}/10
+          </div>
+        </div>
+        <div class="rating-description" style={`color: ${color};`}>
+          {label}
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .ratings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 640px) {
+    .ratings-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rating-item {
+    padding: var(--space-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .rating-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: var(--space-2);
+  }
+
+  .rating-icon {
+    font-size: 18px;
+  }
+
+  .rating-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .rating-bar-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: 6px;
+  }
+
+  .rating-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--color-surface-3);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .rating-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+  }
+
+  .rating-value {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 800;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .rating-description {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+</style>

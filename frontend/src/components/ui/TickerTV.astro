@@ -1,0 +1,302 @@
+---
+/**
+ * Ticker TV Sports Style
+ * Design: Red background, team logos, compact 40px height
+ * Animation: Pure CSS translateX
+ */
+
+export interface TickerItem {
+  id: string;
+  league: 'mlb' | 'kbo' | 'npb';
+  homeTeam: string;
+  awayTeam: string;
+  homeAbbr: string;
+  awayAbbr: string;
+  homeLogo?: string;
+  awayLogo?: string;
+  homeScore?: number;
+  awayScore?: number;
+  inning?: string;
+  status: 'live' | 'final' | 'scheduled';
+}
+
+interface Props {
+  items: TickerItem[];
+  speed?: number; // Animation duration in seconds
+}
+
+const { items, speed = 40 } = Astro.props;
+
+// Count live games
+const liveCount = items.filter(item => item.status === 'live').length;
+---
+
+<div class="ticker-tv">
+  <div class="ticker-label">
+    <span class="live-dot"></span>
+    <span class="live-text">EN DIRECT</span>
+  </div>
+
+  <div class="ticker-track-container">
+    <div class="ticker-track" style={`--animation-duration: ${speed}s;`}>
+      <!-- Duplicate items for seamless loop -->
+      {[...items, ...items].map((item) => (
+        <div class="ticker-item">
+          <!-- Away Team -->
+          <div class="ticker-team">
+            {item.awayLogo ? (
+              <img src={item.awayLogo} alt={item.awayAbbr} class="team-logo" />
+            ) : (
+              <div class="team-logo-placeholder">{item.awayAbbr[0]}</div>
+            )}
+            <span class="team-abbr">{item.awayAbbr}</span>
+          </div>
+
+          <!-- Score -->
+          <div class="ticker-score">
+            {item.status === 'live' || item.status === 'final' ? (
+              <>
+                <span class={item.status === 'live' ? 'score-live' : 'score-final'}>
+                  {item.awayScore ?? 0}
+                </span>
+                <span class="score-separator">-</span>
+                <span class={item.status === 'live' ? 'score-live' : 'score-final'}>
+                  {item.homeScore ?? 0}
+                </span>
+              </>
+            ) : (
+              <span class="score-scheduled">VS</span>
+            )}
+          </div>
+
+          <!-- Home Team -->
+          <div class="ticker-team">
+            <span class="team-abbr">{item.homeAbbr}</span>
+            {item.homeLogo ? (
+              <img src={item.homeLogo} alt={item.homeAbbr} class="team-logo" />
+            ) : (
+              <div class="team-logo-placeholder">{item.homeAbbr[0]}</div>
+            )}
+          </div>
+
+          <!-- Status indicator -->
+          {item.status === 'live' && item.inning && (
+            <div class="ticker-inning">{item.inning}</div>
+          )}
+
+          <!-- Separator -->
+          <div class="ticker-separator"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .ticker-tv {
+    display: flex;
+    align-items: stretch;
+    height: 40px;
+    background: var(--color-red);
+    overflow: hidden;
+    position: relative;
+    z-index: var(--z-sticky);
+  }
+
+  /* EN DIRECT Label */
+  .ticker-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    background: rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  .live-text {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+  }
+
+  /* Track container */
+  .ticker-track-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    animation: scroll-ticker var(--animation-duration) linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes scroll-ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .ticker-track:hover {
+    animation-play-state: paused;
+  }
+
+  /* Ticker item */
+  .ticker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ticker-team {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .team-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .team-logo-placeholder {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .team-abbr {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+  }
+
+  /* Score */
+  .ticker-score {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-live {
+    color: #ffffff;
+    font-weight: 800;
+  }
+
+  .score-final {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .score-scheduled {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .score-separator {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+  }
+
+  .ticker-inning {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Separator */
+  .ticker-separator {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    margin-left: 8px;
+  }
+
+  /* Pause on reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+      animation: none;
+    }
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .ticker-tv {
+      height: 36px;
+    }
+
+    .ticker-label {
+      padding: 0 10px;
+    }
+
+    .live-text {
+      font-size: 10px;
+    }
+
+    .team-abbr {
+      font-size: 11px;
+    }
+
+    .ticker-score {
+      font-size: 12px;
+    }
+
+    .team-logo,
+    .team-logo-placeholder {
+      width: 20px;
+      height: 20px;
+    }
+  }
+</style>

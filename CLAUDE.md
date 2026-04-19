@@ -1,4 +1,41 @@
-# CLAUDE.md - Baseball FR
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
+# Baseball FR - home-run.fr
+
+## Development Commands
+
+### Frontend (Astro 5)
+```bash
+cd frontend
+
+npm run dev       # Start dev server (http://localhost:4321)
+npm run build     # Build for production (astro check + astro build)
+npm run preview   # Preview production build
+```
+
+### Backend (Node.js + Express)
+```bash
+cd backend
+
+npm run dev       # Start dev server with hot reload (tsx watch)
+npm start         # Start production server
+npm run build     # Compile TypeScript to JavaScript
+```
+
+### Full Stack
+```bash
+# Terminal 1 - Frontend
+cd frontend && npm run dev
+
+# Terminal 2 - Backend API
+cd backend && npm run dev
+```
+
+---
 
 ## Ton de communication
 
@@ -13,6 +50,43 @@
 
 Si une idée est mauvaise → dis-le clairement et propose une alternative.
 Si une décision est risquée → explique pourquoi et donne les conséquences.
+
+---
+
+## Règle absolue : Zéro donnée inventée
+
+**INTERDIT sans exception :**
+- Inventer des cotes (ex: "Unibet proposait 1.95 sur les Dodgers")
+- Inventer des chiffres de TRJ (taux de retour joueur)
+- Inventer des notes d'applications App Store / Google Play
+- Inventer des nombres d'avis utilisateurs
+- Inventer des comparatifs de cotes entre bookmakers
+- Inventer des témoignages ou exemples de gains
+- Inventer des conditions de bonus (wagering, délais, montants)
+- Inventer des numéros de licence ANJ
+
+**Pourquoi c'est critique :**
+Ce site est soumis à la réglementation ANJ et au droit de la consommation français.
+Toute donnée fausse sur un opérateur de paris sportifs constitue une pratique
+commerciale trompeuse (Article L121-2 du Code de la consommation).
+Les sanctions incluent fermeture du site et poursuites pénales.
+
+**Ce que tu dois faire à la place :**
+1. Laisser un placeholder explicite : [DONNÉE À VÉRIFIER : source requise]
+2. Ou utiliser une formulation générique sans chiffre précis
+3. Ou me demander de fournir la vraie donnée avant de rédiger
+
+**Sources autorisées uniquement :**
+- Données fournies directement par Anthony
+- APIs officielles (statsapi.mlb.com, TheSportsDB)
+- Sites officiels des bookmakers (betclic.fr, unibet.fr, winamax.fr, pmu.fr)
+- CGU officielles des opérateurs (conditions de bonus copiées mot pour mot)
+
+**Action immédiate :**
+Passe en revue TOUS les fichiers src/content/bookmakers/*.md déjà créés
+et remplace chaque chiffre non vérifié par un placeholder [À VÉRIFIER].
+Priorité : ratings, TRJ, notes App Store/Google Play, conditions de bonus,
+numéros de licence ANJ.
 
 ---
 
@@ -295,6 +369,87 @@ UnifiedProvider {
 
 ---
 
+## Frontend UI/UX Standards
+
+### Design Philosophy
+
+**CRITICAL**: Ce site est un **média sportif dense** (référence: BasketUSA, SportyTrader), PAS un site vitrine "aéré" ou une application SaaS.
+
+### Density Requirements
+
+**Syndrome SaaS INTERDIT**:
+- Paddings/margins divisés par 2 par rapport aux standards SaaS
+- Font-sizes compacts (11-13px pour la plupart des textes)
+- Espacement vertical minimal entre sections
+- Maximum d'informations visibles sans scroll
+
+**Standards de densité**:
+```css
+/* Widgets sidebar */
+padding: var(--space-2);        /* 8px, PAS 16px ou 24px */
+widget-title: 13px;             /* PAS var(--text-base) ou plus */
+widget-gap: var(--space-3);     /* 12px entre widgets */
+
+/* Cards/Articles */
+padding: var(--space-2);        /* 8px, PAS var(--space-4) */
+title: 13px;                    /* PAS var(--text-base) ou var(--text-lg) */
+gap: var(--space-3);            /* 12px entre cards */
+
+/* Ticker */
+max-height: 40px;               /* Strict, une seule ligne */
+font-size: 12px;                /* Texte principal */
+padding: 8px 0;                 /* Vertical minimal */
+
+/* Featured blocks */
+padding: var(--space-3);        /* 12px, PAS var(--space-6) */
+title: var(--text-lg);          /* Maximum pour featured */
+```
+
+**Container Width**:
+- Desktop: `max-width: 1400px` (PAS 1200px - utiliser toute la largeur)
+- Ratio 70/30 pour layout main/sidebar
+
+### Sidebar Rules
+
+**INTERDIT**:
+- `overflow-y: auto` ou `scroll` dans les widgets individuels
+- Scrollbars imbriquées (mauvaise UX)
+
+**OBLIGATOIRE**:
+- Afficher Top 5 uniquement dans les tableaux
+- Lien "Voir tout →" pour accès complet
+- Sidebar sticky mais contenu entièrement visible
+
+### Widget Bookmakers (Affiliation Critical)
+
+Widget doit être **visuellement distinct** pour maximiser conversions:
+```css
+.bookmakers-widget {
+  background: linear-gradient(135deg, rgba(232, 16, 46, 0.05) 0%, rgba(0, 82, 165, 0.05) 100%);
+  border: 2px solid var(--color-primary);  /* Bordure épaisse */
+}
+
+.bookmaker-bonus {
+  color: var(--color-success);  /* Vert vif */
+  font-weight: 700;
+}
+```
+
+### Performance Targets
+
+**Core Web Vitals** (OBLIGATOIRE):
+- **LCP** (Largest Contentful Paint): < 2s
+- **INP** (Interaction to Next Paint): < 200ms
+- **CLS** (Cumulative Layout Shift): < 0.1
+
+**Optimizations**:
+- Featured image: `loading="eager"` + `fetchpriority="high"`
+- Sidebar: `contain: layout style` + `content-visibility: auto`
+- Images lazy-load après le fold
+- CSS minification: Lightning CSS (Vite config)
+
+---
+
 ## Design System (tokens-based)
 
 ### Principe
@@ -303,7 +458,47 @@ UnifiedProvider {
 
 Utilisation de **CSS Custom Properties** (variables CSS) pour tous les tokens.
 
-### Fichier de tokens
+### Architecture Tokens
+
+**Fichier principal**: `frontend/src/styles/tokens.css`
+
+Tous les tokens sont des CSS Custom Properties (variables CSS). Modification centralisée = tout le site change automatiquement.
+
+**Hiérarchie d'import** (global.css):
+```css
+@import './tokens.css';           /* 1. Design tokens */
+@tailwind base;                   /* 2. Tailwind reset */
+@tailwind components;             /* 3. Tailwind components */
+@tailwind utilities;              /* 4. Tailwind utilities */
+/* Custom styles */                /* 5. Styles custom */
+```
+
+### Tokens Essentiels
+
+**Surfaces (nouvellement ajoutés 2026-04-14)**:
+```css
+--color-surface:   #f9fafb;  /* Base cards/sections */
+--color-surface-2: #f3f4f6;  /* Nested surfaces (odd-rows, etc.) */
+--color-surface-3: #e5e7eb;  /* Deep nested (hover states) */
+```
+
+**Texte**:
+```css
+--color-text:       #111827;  /* Texte principal */
+--color-text-muted: #6b7280;  /* Texte atténué */
+--color-text-faint: #9ca3af;  /* Texte très atténué (nouveaux) */
+```
+
+**Spacing (Utilisez les PETITES valeurs pour densité)**:
+```css
+--space-1: 0.25rem;  /* 4px */
+--space-2: 0.5rem;   /* 8px  - Standard widgets/cards */
+--space-3: 0.75rem;  /* 12px - Standard gaps */
+--space-4: 1rem;     /* 16px - Rarement utilisé */
+--space-6: 1.5rem;   /* 24px - ÉVITER sauf hero */
+```
+
+### Exemple de fichier tokens complet
 
 ```css
 /* src/styles/tokens.css */

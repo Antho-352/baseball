@@ -1,0 +1,502 @@
+---
+/**
+ * NPB Team Detail Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getNPBLogo } from '@lib/constants/logos';
+
+export async function getStaticPaths() {
+  // NPB teams data
+  const npbTeams = [
+    // Central League
+    { name: 'Yomiuri Giants', slug: 'yomiuri-giants', league: 'Central', city: 'Tokyo', stadium: 'Tokyo Dome', founded: 1934 },
+    { name: 'Hanshin Tigers', slug: 'hanshin-tigers', league: 'Central', city: 'Nishinomiya', stadium: 'Hanshin Koshien Stadium', founded: 1935 },
+    { name: 'Chunichi Dragons', slug: 'chunichi-dragons', league: 'Central', city: 'Nagoya', stadium: 'Vantelin Dome Nagoya', founded: 1936 },
+    { name: 'Hiroshima Toyo Carp', slug: 'hiroshima-toyo-carp', league: 'Central', city: 'Hiroshima', stadium: 'Mazda Stadium', founded: 1950 },
+    { name: 'Yakult Swallows', slug: 'yakult-swallows', league: 'Central', city: 'Tokyo', stadium: 'Meiji Jingu Stadium', founded: 1950 },
+    { name: 'Yokohama DeNA BayStars', slug: 'yokohama-dena-baystars', league: 'Central', city: 'Yokohama', stadium: 'Yokohama Stadium', founded: 1950 },
+
+    // Pacific League
+    { name: 'Fukuoka SoftBank Hawks', slug: 'fukuoka-softbank-hawks', league: 'Pacific', city: 'Fukuoka', stadium: 'Mizuho PayPay Dome Fukuoka', founded: 1938 },
+    { name: 'Orix Buffaloes', slug: 'orix-buffaloes', league: 'Pacific', city: 'Osaka', stadium: 'Kyocera Dome Osaka', founded: 1936 },
+    { name: 'Saitama Seibu Lions', slug: 'saitama-seibu-lions', league: 'Pacific', city: 'Tokorozawa', stadium: 'Belluna Dome', founded: 1950 },
+    { name: 'Chiba Lotte Marines', slug: 'chiba-lotte-marines', league: 'Pacific', city: 'Chiba', stadium: 'ZOZO Marine Stadium', founded: 1950 },
+    { name: 'Tohoku Rakuten Golden Eagles', slug: 'tohoku-rakuten-golden-eagles', league: 'Pacific', city: 'Sendai', stadium: 'Rakuten Mobile Park Miyagi', founded: 2005 },
+    { name: 'Hokkaido Nippon-Ham Fighters', slug: 'hokkaido-nippon-ham-fighters', league: 'Pacific', city: 'Sapporo', stadium: 'ES CON Field Hokkaido', founded: 1946 },
+  ];
+
+  return npbTeams.map(team => ({
+    params: { slug: team.slug },
+    props: { team }
+  }));
+}
+
+const { team } = Astro.props;
+
+// Mock stats - will be from API later
+const teamStats = {
+  wins: 45,
+  losses: 38,
+  pct: 0.542,
+  rank: 3,
+  gamesBack: 5.5,
+  homeRecord: '24-17',
+  awayRecord: '21-21',
+  last10: '6-4',
+  streak: 'W2'
+};
+
+const topPlayers = [
+  { name: 'Player 1', position: 'OF', avg: '.315', hr: 18, rbi: 52 },
+  { name: 'Player 2', position: '1B', avg: '.298', hr: 22, rbi: 61 },
+  { name: 'Player 3', position: 'P', era: '2.45', wins: 8, so: 102 },
+];
+
+const title = `${team.name} - Équipe NPB | home-run.fr`;
+const description = `Suivez ${team.name} en NPB : statistiques, classement, effectif et actualités de l'équipe de ${team.city}.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Team Header -->
+    <section class="team-header">
+      <div class="team-header-content">
+        <img src={getNPBLogo(team.name)} alt={team.name} class="team-logo-large" />
+        <div class="team-info">
+          <div class="team-meta">
+            <span class="league-badge npb">{team.league} League</span>
+          </div>
+          <h1 class="team-name">{team.name}</h1>
+          <div class="team-details">
+            <div class="detail-item">
+              <span class="detail-icon">🏟️</span>
+              <span>{team.stadium}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span>{team.city}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <span>Fondé en {team.founded}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Classement</div>
+        <div class="stat-value">{teamStats.rank}<sup>e</sup></div>
+        <div class="stat-subtitle">{team.league} League</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Bilan</div>
+        <div class="stat-value">{teamStats.wins}-{teamStats.losses}</div>
+        <div class="stat-subtitle">{(teamStats.pct * 100).toFixed(1)}%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Domicile</div>
+        <div class="stat-value">{teamStats.homeRecord}</div>
+        <div class="stat-subtitle">À domicile</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Extérieur</div>
+        <div class="stat-value">{teamStats.awayRecord}</div>
+        <div class="stat-subtitle">En déplacement</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">10 derniers</div>
+        <div class="stat-value">{teamStats.last10}</div>
+        <div class="stat-subtitle">Forme récente</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Série</div>
+        <div class="stat-value highlight">{teamStats.streak}</div>
+        <div class="stat-subtitle">Actuelle</div>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content-layout">
+      <!-- Players Section -->
+      <section class="main-section">
+        <h2 class="section-title">Joueurs clés</h2>
+        <div class="players-grid">
+          {topPlayers.map(player => (
+            <div class="player-card">
+              <div class="player-header">
+                <div class="player-avatar">{player.position}</div>
+                <div>
+                  <div class="player-name">{player.name}</div>
+                  <div class="player-position">{player.position}</div>
+                </div>
+              </div>
+              <div class="player-stats">
+                {player.avg && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">AVG</span>
+                    <span class="stat-value-sm">{player.avg}</span>
+                  </div>
+                )}
+                {player.hr && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">HR</span>
+                    <span class="stat-value-sm">{player.hr}</span>
+                  </div>
+                )}
+                {player.rbi && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">RBI</span>
+                    <span class="stat-value-sm">{player.rbi}</span>
+                  </div>
+                )}
+                {player.era && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">ERA</span>
+                    <span class="stat-value-sm">{player.era}</span>
+                  </div>
+                )}
+                {player.wins && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">W</span>
+                    <span class="stat-value-sm">{player.wins}</span>
+                  </div>
+                )}
+                {player.so && (
+                  <div class="stat-item">
+                    <span class="stat-label-sm">SO</span>
+                    <span class="stat-value-sm">{player.so}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Quick Links -->
+        <div class="widget">
+          <h3 class="widget-title">Liens rapides</h3>
+          <div class="widget-content">
+            <a href="/npb/classement/" class="quick-link">📊 Classement NPB</a>
+            <a href="/npb/scores/" class="quick-link">⚾ Scores du jour</a>
+            <a href="/npb/equipes/" class="quick-link">🏟️ Toutes les équipes</a>
+          </div>
+        </div>
+
+        <!-- News Widget -->
+        <div class="widget">
+          <h3 class="widget-title">Actualités {team.name}</h3>
+          <div class="widget-content">
+            <p class="widget-empty">Actualités à venir...</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  /* Team Header */
+  .team-header {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .team-header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .team-logo-large {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  .team-info {
+    flex: 1;
+  }
+
+  .team-meta {
+    margin-bottom: var(--space-2);
+  }
+
+  .league-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-full);
+    color: white;
+  }
+
+  .league-badge.npb {
+    background: #e67e00;
+  }
+
+  .team-name {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .team-details {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .detail-icon {
+    font-size: var(--text-lg);
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-value.highlight {
+    color: var(--color-success);
+  }
+
+  .stat-subtitle {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* Content Layout */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-6);
+  }
+
+  .main-section {
+    min-width: 0;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+  }
+
+  /* Players Grid */
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .player-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+  }
+
+  .player-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .player-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #e67e00 0%, #ff9933 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: white;
+  }
+
+  .player-name {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .player-position {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .player-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label-sm {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-value-sm {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .widget {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+  }
+
+  .widget-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .widget-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .quick-link {
+    display: block;
+    padding: var(--space-2);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .quick-link:hover {
+    border-color: var(--color-primary);
+    background: var(--color-surface-2);
+  }
+
+  .widget-empty {
+    padding: var(--space-4);
+    text-align: center;
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .content-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .team-header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .team-name {
+      font-size: var(--text-3xl);
+    }
+
+    .team-details {
+      justify-content: center;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .players-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

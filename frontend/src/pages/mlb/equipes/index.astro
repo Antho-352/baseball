@@ -1,0 +1,200 @@
+---
+/**
+ * MLB Teams List Page
+ * Lists all 30 MLB teams organized by division
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getMLBLogo } from '@lib/constants/logos';
+
+// Fetch teams from MLB Stats API
+async function fetchMLBTeams() {
+  try {
+    const response = await fetch('https://statsapi.mlb.com/api/v1/teams?sportId=1&season=2026');
+    const data = await response.json();
+    return data.teams || [];
+  } catch (error) {
+    console.error('Failed to fetch MLB teams:', error);
+    return [];
+  }
+}
+
+const teams = await fetchMLBTeams();
+
+// Group teams by division
+const divisions = teams.reduce((acc: any, team: any) => {
+  const divisionName = team.division?.name || 'Other';
+  if (!acc[divisionName]) {
+    acc[divisionName] = [];
+  }
+  acc[divisionName].push(team);
+  return acc;
+}, {});
+
+// Sort divisions by league (AL first, then NL)
+const sortedDivisions = Object.entries(divisions).sort(([a], [b]) => {
+  if (a.startsWith('American')) return -1;
+  if (b.startsWith('American')) return 1;
+  return a.localeCompare(b);
+});
+
+const title = 'Équipes MLB : Toutes les franchises de la MLB';
+const description = 'Découvrez les 30 équipes de la Major League Baseball (MLB) : statistiques, rosters, calendriers et actualités de chaque franchise.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <h1 class="page-title">Équipes MLB</h1>
+      <p class="page-description">
+        Les 30 franchises de la Major League Baseball
+      </p>
+    </header>
+
+    <!-- Teams Grid by Division -->
+    <div class="divisions-container">
+      {sortedDivisions.map(([divisionName, divisionTeams]: [string, any]) => (
+        <section class="division-section">
+          <h2 class="division-title">{divisionName}</h2>
+
+          <div class="teams-grid">
+            {divisionTeams.map((team: any) => (
+              <a
+                href={`/mlb/equipes/${team.name.toLowerCase().replace(/\s+/g, '-')}/`}
+                class="team-card"
+              >
+                <div class="team-logo">
+                  <img
+                    src={getMLBLogo(team.id)}
+                    alt={team.name}
+                    loading="lazy"
+                  />
+                </div>
+                <div class="team-info">
+                  <h3 class="team-name">{team.name}</h3>
+                  <p class="team-location">{team.locationName}</p>
+                  <p class="team-division">{team.division?.abbreviation || ''}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-8);
+    text-align: center;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  .divisions-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .division-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+  }
+
+  .division-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .team-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .team-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+  }
+
+  .team-logo {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+  }
+
+  .team-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .team-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .team-name {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+  }
+
+  .team-location {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .team-division {
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .teams-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+  }
+</style>

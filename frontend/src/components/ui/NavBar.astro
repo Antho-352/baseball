@@ -17,9 +17,8 @@ interface Props {
 
 const { currentPath } = Astro.props;
 
-// Navigation items with dropdowns
+// Navigation items with dropdowns (no Accueil - logo serves this purpose)
 const navItems = [
-  { name: 'Accueil', href: '/' },
   {
     name: 'MLB',
     href: '/mlb/',
@@ -69,7 +68,7 @@ const isActive = (href: string) => {
     <div class="navbar-inner">
       <!-- Logo -->
       <a href="/" class="navbar-logo">
-        <span class="logo-icon">⚾</span>
+        <img src="/logo-home-run.webp" alt="home-run.fr" class="logo-image" />
         <span class="logo-text">home-run.fr</span>
       </a>
 
@@ -157,7 +156,7 @@ const isActive = (href: string) => {
   .navbar {
     position: sticky;
     top: 0;
-    z-index: var(--z-sticky);
+    z-index: 1050;
     background: transparent !important;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -194,8 +193,9 @@ const isActive = (href: string) => {
     color: var(--color-primary);
   }
 
-  .logo-icon {
-    font-size: var(--text-2xl);
+  .logo-image {
+    height: 40px;
+    width: auto;
   }
 
   .navbar-menu {
@@ -267,6 +267,7 @@ const isActive = (href: string) => {
     transform: translateY(-8px);
     transition: all var(--transition-base);
     backdrop-filter: blur(var(--blur-lg));
+    z-index: 1060;
   }
 
   .navbar-item:hover .navbar-dropdown {

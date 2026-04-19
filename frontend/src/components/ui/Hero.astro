@@ -101,7 +101,7 @@ const getLeagueColor = (league: string) => {
       {featuredGame && (
         <div class="hero-featured">
           <span class="hero-featured-label">Match en vedette</span>
-          <GameCard {...featuredGame} variant="featured" />
+          <GameCard {...featuredGame} gameId={featuredGame.id} variant="featured" />
         </div>
       )}
     </div>

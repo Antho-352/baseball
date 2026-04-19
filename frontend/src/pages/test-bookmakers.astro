@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+
+const bookmakers = await getCollection('bookmakers');
+---
+
+<html>
+<head>
+  <title>Test Bookmakers Collection</title>
+</head>
+<body>
+  <h1>Bookmakers Collection Test</h1>
+  <p>Total bookmakers: {bookmakers.length}</p>
+  <ul>
+    {bookmakers.map(bookmaker => (
+      <li>
+        Slug: {bookmaker.slug} | Name: {bookmaker.data.name}
+      </li>
+    ))}
+  </ul>
+</body>
+</html>

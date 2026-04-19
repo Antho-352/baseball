@@ -1,0 +1,396 @@
+---
+/**
+ * KBO Players List Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getKBOLogo } from '@lib/constants/logos';
+
+// Mock KBO star players - will be from API later
+const kboPlayers = [
+  // SSG Landers
+  { name: 'Choi Jeong', team: 'SSG Landers', position: 'DH', avg: '.312', hr: 38, rbi: 105 },
+  { name: 'Oh Seung-hwan', team: 'SSG Landers', position: 'RP', era: '1.92', saves: 35, so: 82 },
+
+  // LG Twins
+  { name: 'Kim Hyun-soo', team: 'LG Twins', position: 'OF', avg: '.328', hr: 22, rbi: 89 },
+  { name: 'Go Woo-seok', team: 'LG Twins', position: 'RP', era: '2.15', saves: 28, so: 76 },
+
+  // Samsung Lions
+  { name: 'Koo Ja-wook', team: 'Samsung Lions', position: '3B', avg: '.298', hr: 31, rbi: 92 },
+
+  // KIA Tigers
+  { name: 'Na Sung-bum', team: 'KIA Tigers', position: 'OF', avg: '.305', hr: 28, rbi: 95 },
+  { name: 'Yang Hyeon-jong', team: 'KIA Tigers', position: 'SP', era: '2.87', wins: 14, so: 168 },
+
+  // Doosan Bears
+  { name: 'Yang Eui-ji', team: 'Doosan Bears', position: 'C', avg: '.314', hr: 18, rbi: 78 },
+
+  // Kiwoom Heroes
+  { name: 'Kim Hye-seong', team: 'Kiwoom Heroes', position: 'SS', avg: '.308', hr: 11, rbi: 64, sb: 42 },
+
+  // Lotte Giants
+  { name: 'Jeon Jun-woo', team: 'Lotte Giants', position: 'C', avg: '.296', hr: 24, rbi: 86 },
+];
+
+const title = 'Joueurs KBO - Stars et Statistiques | home-run.fr';
+const description = 'Découvrez les meilleurs joueurs de la Korean Baseball Organization (KBO) : statistiques, profils et performances des stars coréennes.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-content">
+        <div class="header-icon">🇰🇷</div>
+        <div>
+          <h1 class="page-title">Joueurs KBO</h1>
+          <p class="page-description">
+            Stars et meilleurs joueurs de la Korean Baseball Organization
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-group">
+        <label for="position-filter">Position</label>
+        <select id="position-filter" class="filter-select">
+          <option value="all">Toutes</option>
+          <option value="C">Receveur (C)</option>
+          <option value="1B">1ère base (1B)</option>
+          <option value="2B">2e base (2B)</option>
+          <option value="3B">3e base (3B)</option>
+          <option value="SS">Arrêt-court (SS)</option>
+          <option value="OF">Voltigeur (OF)</option>
+          <option value="DH">Frappeur désigné (DH)</option>
+          <option value="SP">Lanceur partant (SP)</option>
+          <option value="RP">Lanceur de relève (RP)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="team-filter">Équipe</label>
+        <select id="team-filter" class="filter-select">
+          <option value="all">Toutes</option>
+          <option value="SSG Landers">SSG Landers</option>
+          <option value="LG Twins">LG Twins</option>
+          <option value="Samsung Lions">Samsung Lions</option>
+          <option value="KIA Tigers">KIA Tigers</option>
+          <option value="Doosan Bears">Doosan Bears</option>
+          <option value="Kiwoom Heroes">Kiwoom Heroes</option>
+          <option value="Lotte Giants">Lotte Giants</option>
+          <option value="NC Dinos">NC Dinos</option>
+          <option value="Hanwha Eagles">Hanwha Eagles</option>
+          <option value="KT Wiz">KT Wiz</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Players Grid -->
+    <section class="players-grid">
+      {kboPlayers.map(player => (
+        <div class="player-card">
+          <div class="player-header">
+            <div class="player-avatar">{player.position}</div>
+            <div class="player-info">
+              <h3 class="player-name">{player.name}</h3>
+              <div class="player-meta">
+                <span class="player-team">{player.team}</span>
+                <span class="player-position">{player.position}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-stats">
+            {player.avg && (
+              <div class="stat-item">
+                <span class="stat-label">AVG</span>
+                <span class="stat-value">{player.avg}</span>
+              </div>
+            )}
+            {player.hr && (
+              <div class="stat-item">
+                <span class="stat-label">HR</span>
+                <span class="stat-value">{player.hr}</span>
+              </div>
+            )}
+            {player.rbi && (
+              <div class="stat-item">
+                <span class="stat-label">RBI</span>
+                <span class="stat-value">{player.rbi}</span>
+              </div>
+            )}
+            {player.sb && (
+              <div class="stat-item">
+                <span class="stat-label">SB</span>
+                <span class="stat-value">{player.sb}</span>
+              </div>
+            )}
+            {player.era && (
+              <div class="stat-item">
+                <span class="stat-label">ERA</span>
+                <span class="stat-value">{player.era}</span>
+              </div>
+            )}
+            {player.wins && (
+              <div class="stat-item">
+                <span class="stat-label">W</span>
+                <span class="stat-value">{player.wins}</span>
+              </div>
+            )}
+            {player.saves && (
+              <div class="stat-item">
+                <span class="stat-label">SV</span>
+                <span class="stat-value">{player.saves}</span>
+              </div>
+            )}
+            {player.so && (
+              <div class="stat-item">
+                <span class="stat-label">SO</span>
+                <span class="stat-value">{player.so}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- Info Note -->
+    <section class="info-note">
+      <p>
+        <strong>Note :</strong> Cette liste présente les principaux joueurs stars de la KBO.
+        Les statistiques sont indicatives et seront mises à jour régulièrement.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  /* Page Header */
+  .page-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .header-icon {
+    font-size: 64px;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .filter-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .filter-group label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .filter-select {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    font-family: inherit;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  /* Players Grid */
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .player-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    transition: all var(--transition-base);
+  }
+
+  .player-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .player-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .player-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #0052a5 0%, #003d7a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .player-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .player-name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-meta {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .player-team {
+    font-weight: var(--font-semibold);
+  }
+
+  .player-position {
+    padding: 2px 6px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Player Stats */
+  .player-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+  }
+
+  /* Info Note */
+  .info-note {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .info-note strong {
+    color: var(--color-text);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+
+    .filters {
+      flex-direction: column;
+    }
+
+    .players-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .player-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  // Filter functionality (client-side)
+  const positionFilter = document.getElementById('position-filter') as HTMLSelectElement;
+  const teamFilter = document.getElementById('team-filter') as HTMLSelectElement;
+
+  // Add event listeners for filtering
+  // TODO: Implement filtering logic when backend is ready
+</script>

@@ -1,0 +1,205 @@
+---
+/**
+ * Paris Sportifs Hub
+ * Liste des bookmakers disponibles
+ */
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getBookmakerLogo } from '@lib/constants/logos';
+
+const bookmakers = [
+  {
+    slug: 'betclic',
+    name: 'Betclic',
+    logo: getBookmakerLogo('betclic'),
+    rating: 8.5,
+    bonus: "Jusqu'à 200€ offerts",
+    highlight: 'Meilleur choix MLB',
+  },
+  {
+    slug: 'unibet',
+    name: 'Unibet',
+    logo: getBookmakerLogo('unibet'),
+    rating: 8.2,
+    bonus: '150€ offerts',
+    highlight: 'Application performante',
+  },
+  {
+    slug: 'winamax',
+    name: 'Winamax',
+    logo: getBookmakerLogo('winamax'),
+    rating: 8.0,
+    bonus: '100€ remboursés',
+    highlight: 'Interface intuitive',
+  },
+];
+---
+
+<BaseLayout
+  title="Meilleurs sites de paris sportifs Baseball | home-run.fr"
+  description="Comparatif complet des meilleurs bookmakers pour parier sur le baseball MLB, KBO et NPB. Bonus, cotes, avis détaillés."
+>
+  <div class="container">
+    <div class="hub-header">
+      <h1 class="hub-title">PARIS SPORTIFS BASEBALL</h1>
+      <p class="hub-subtitle">
+        Comparatif des meilleurs bookmakers pour parier sur MLB, KBO et NPB
+      </p>
+    </div>
+
+    <div class="bookmakers-grid">
+      {bookmakers.map(bookmaker => (
+        <a href={`/paris-sportifs/${bookmaker.slug}/`} class="bookmaker-card">
+          <div class="card-header">
+            <img src={bookmaker.logo} alt={`Logo ${bookmaker.name}`} class="card-logo" width="64" height="64" />
+            <div class="card-rating">
+              <span class="rating-value">{bookmaker.rating}</span>
+              <span class="rating-max">/10</span>
+            </div>
+          </div>
+          <h2 class="card-name">{bookmaker.name}</h2>
+          <p class="card-bonus">{bookmaker.bonus}</p>
+          <div class="card-highlight">{bookmaker.highlight}</div>
+          <div class="card-cta">
+            Voir l'avis complet →
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .hub-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .hub-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 900;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #e8102e 0%, #0052a5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-2);
+  }
+
+  .hub-subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  .bookmakers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 1024px) {
+    .bookmakers-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bookmakers-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .bookmaker-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bookmaker-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .card-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+  }
+
+  .card-rating {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 4px 8px;
+    background: var(--color-success);
+    border-radius: var(--radius-md);
+  }
+
+  .rating-value {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+  }
+
+  .rating-max {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .card-name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-bonus {
+    font-size: var(--text-base);
+    color: var(--color-success);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .card-highlight {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
+    flex: 1;
+  }
+
+  .card-cta {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-align: center;
+    padding: var(--space-2);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+  }
+</style>

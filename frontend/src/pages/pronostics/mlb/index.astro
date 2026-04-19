@@ -1,0 +1,149 @@
+---
+/**
+ * MLB Predictions Hub Page
+ * MLB-only predictions list
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getMLBLogo } from '@lib/constants/logos';
+
+// Mock data - will query DB
+const mockPredictions = [
+  {
+    id: '1',
+    league: 'mlb',
+    date: '2026-04-15',
+    homeTeam: 'New York Yankees',
+    awayTeam: 'Boston Red Sox',
+    homeTeamId: 147,
+    awayTeamId: 111,
+    prediction: 'Yankees',
+    confidence: 75,
+    slug: '2026-04-15-yankees-vs-red-sox'
+  },
+];
+
+const title = 'Pronostics MLB : Prédictions et Analyses Baseball';
+const description = 'Pronostics MLB gratuits : analyses détaillées, statistiques et prédictions pour parier sur le baseball.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Pronostics MLB</h1>
+      <p class="page-description">Analyses et prédictions pour la Major League Baseball</p>
+    </header>
+
+    <div class="warning-box">
+      <strong>Jeu responsable :</strong> Jouer comporte des risques.
+      <a href="https://www.joueurs-info-service.fr/" target="_blank">joueurs-info-service.fr</a> | 09 74 75 13 13
+    </div>
+
+    <div class="predictions-list">
+      {mockPredictions.map((prediction) => (
+        <a href={`/pronostics/mlb/${prediction.slug}/`} class="prediction-card">
+          <div class="prediction-header">
+            <span class="prediction-date">
+              {new Date(prediction.date).toLocaleDateString('fr-FR')}
+            </span>
+          </div>
+          <div class="prediction-matchup">
+            <div class="team">
+              <img src={getMLBLogo(prediction.awayTeamId)} alt={prediction.awayTeam} />
+              <span>{prediction.awayTeam}</span>
+            </div>
+            <span class="vs">VS</span>
+            <div class="team">
+              <img src={getMLBLogo(prediction.homeTeamId)} alt={prediction.homeTeam} />
+              <span>{prediction.homeTeam}</span>
+            </div>
+          </div>
+          <div class="prediction-footer">
+            <span>Confiance: {prediction.confidence}%</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-6);
+    text-align: center;
+  }
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .warning-box {
+    padding: var(--space-4);
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--color-error);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+  }
+  .warning-box a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  .predictions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .prediction-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+  .prediction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+  }
+  .prediction-header {
+    margin-bottom: var(--space-3);
+  }
+  .prediction-date {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+  .prediction-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+  .team {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .team img {
+    width: 48px;
+    height: 48px;
+  }
+  .team span {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+  .vs {
+    font-weight: var(--font-bold);
+    color: var(--color-text-muted);
+  }
+  .prediction-footer {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+    font-weight: var(--font-semibold);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+</style>

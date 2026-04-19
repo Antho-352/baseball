@@ -1,0 +1,483 @@
+---
+/**
+ * MLB Player Detail Page
+ * Dynamic route for individual player pages
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getMLBLogo } from '@lib/constants/logos';
+
+export async function getStaticPaths() {
+  // Star players (V1 - will be DB query later)
+  const STAR_PLAYERS = [
+    { id: 660271, name: 'Shohei Ohtani' },
+    { id: 592450, name: 'Aaron Judge' },
+    { id: 665742, name: 'Juan Soto' },
+    { id: 608070, name: 'Ronald Acuña Jr.' },
+    { id: 608369, name: 'Mookie Betts' },
+    { id: 645302, name: 'Francisco Lindor' },
+    { id: 545361, name: 'Mike Trout' },
+    { id: 621020, name: 'José Ramírez' },
+    { id: 660670, name: 'Bobby Witt Jr.' },
+    { id: 665487, name: 'Julio Rodríguez' },
+    { id: 645277, name: 'Freddie Freeman' },
+    { id: 656941, name: 'Corbin Carroll' },
+    { id: 663993, name: 'Gunnar Henderson' },
+    { id: 624413, name: 'Rafael Devers' },
+  ];
+
+  return STAR_PLAYERS.map((player) => ({
+    params: {
+      slug: player.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '')
+    },
+    props: { playerId: player.id, playerName: player.name }
+  }));
+}
+
+const { playerId, playerName } = Astro.props;
+
+// Fetch player details
+async function fetchPlayerDetails(playerId: number) {
+  try {
+    const res = await fetch(
+      `https://statsapi.mlb.com/api/v1/people/${playerId}?hydrate=currentTeam,stats(type=season,season=2026,gameType=R)`
+    );
+    const data = await res.json();
+    return data.people?.[0] || {};
+  } catch (error) {
+    console.error(`Failed to fetch player ${playerId}:`, error);
+    return {};
+  }
+}
+
+const player = await fetchPlayerDetails(playerId);
+
+// Extract stats
+const seasonStats = player.stats?.[0]?.splits?.[0]?.stat || {};
+const isPitcher = player.primaryPosition?.code === '1';
+
+const title = `${playerName} : Stats, Biographie et Actualités MLB`;
+const description = `Statistiques complètes, biographie et actualités de ${playerName} (${player.currentTeam?.name || 'MLB'}). Suivez les performances du joueur en direct.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <!-- Player Header -->
+    <header class="player-header">
+      <div class="player-header-bg">
+        {player.currentTeam && (
+          <img
+            src={getMLBLogo(player.currentTeam.id, 'primary')}
+            alt=""
+            class="header-bg-logo"
+          />
+        )}
+      </div>
+
+      <div class="player-header-content">
+        <div class="player-number-large">
+          #{player.primaryNumber || '--'}
+        </div>
+
+        <div class="player-header-info">
+          <h1 class="player-name">{player.fullName}</h1>
+          <div class="player-meta">
+            <span class="player-team">
+              {player.currentTeam && (
+                <img
+                  src={getMLBLogo(player.currentTeam.id)}
+                  alt={player.currentTeam.name}
+                  class="team-logo-inline"
+                />
+              )}
+              {player.currentTeam?.name || 'Free Agent'}
+            </span>
+            <span class="player-position">{player.primaryPosition?.name || 'N/A'}</span>
+          </div>
+
+          <div class="player-bio">
+            <span>Né le {new Date(player.birthDate).toLocaleDateString('fr-FR')}</span>
+            <span>{player.birthCity}, {player.birthCountry}</span>
+            <span>{player.height} • {player.weight} lbs</span>
+            <span>Batte/Lance : {player.batSide?.code}/{player.pitchHand?.code}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="player-layout">
+      <!-- Main Content -->
+      <main class="player-main">
+        <!-- Stats Section -->
+        <section class="player-section">
+          <h2 class="section-title">Statistiques 2026</h2>
+
+          {!isPitcher ? (
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">AVG</div>
+                <div class="stat-value">{seasonStats.avg || '.---'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">HR</div>
+                <div class="stat-value">{seasonStats.homeRuns || '0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">RBI</div>
+                <div class="stat-value">{seasonStats.rbi || '0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">OPS</div>
+                <div class="stat-value">{seasonStats.ops || '.---'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Hits</div>
+                <div class="stat-value">{seasonStats.hits || '0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Runs</div>
+                <div class="stat-value">{seasonStats.runs || '0'}</div>
+              </div>
+            </div>
+          ) : (
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">ERA</div>
+                <div class="stat-value">{seasonStats.era || '-.--'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">W-L</div>
+                <div class="stat-value">{seasonStats.wins || '0'}-{seasonStats.losses || '0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">SO</div>
+                <div class="stat-value">{seasonStats.strikeOuts || '0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">WHIP</div>
+                <div class="stat-value">{seasonStats.whip || '-.--'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">IP</div>
+                <div class="stat-value">{seasonStats.inningsPitched || '0.0'}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Saves</div>
+                <div class="stat-value">{seasonStats.saves || '0'}</div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <!-- Career Stats Section -->
+        <section class="player-section">
+          <h2 class="section-title">Statistiques carrière</h2>
+          <div class="stats-placeholder">
+            <p>Statistiques carrière complètes à venir...</p>
+          </div>
+        </section>
+
+        <!-- News Section -->
+        <section class="player-section">
+          <h2 class="section-title">Dernières actualités</h2>
+          <div class="stats-placeholder">
+            <p>Actualités du joueur à venir...</p>
+          </div>
+        </section>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="player-sidebar">
+        <!-- Quick Stats Widget -->
+        <div class="widget">
+          <h3 class="widget-title">Fiche joueur</h3>
+          <div class="widget-content">
+            <dl class="player-info-list">
+              <div class="info-item">
+                <dt>Équipe</dt>
+                <dd>{player.currentTeam?.name || 'N/A'}</dd>
+              </div>
+              <div class="info-item">
+                <dt>Position</dt>
+                <dd>{player.primaryPosition?.name || 'N/A'}</dd>
+              </div>
+              <div class="info-item">
+                <dt>Numéro</dt>
+                <dd>#{player.primaryNumber || '--'}</dd>
+              </div>
+              <div class="info-item">
+                <dt>Âge</dt>
+                <dd>{player.currentAge || 'N/A'} ans</dd>
+              </div>
+              <div class="info-item">
+                <dt>MLB Debut</dt>
+                <dd>{player.mlbDebutDate ? new Date(player.mlbDebutDate).getFullYear() : 'N/A'}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Quick Links Widget -->
+        <div class="widget">
+          <h3 class="widget-title">Liens rapides</h3>
+          <div class="widget-content">
+            <nav class="quick-links">
+              <a href={`/mlb/joueurs/${Astro.params.slug}/stats/`}>Statistiques complètes</a>
+              <a href={`/mlb/joueurs/${Astro.params.slug}/news/`}>Actualités</a>
+              <a href={`/mlb/joueurs/${Astro.params.slug}/games/`}>Derniers matchs</a>
+            </nav>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .player-header {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+    overflow: hidden;
+  }
+
+  .player-header-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .header-bg-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .player-header-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .player-number-large {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: white;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: var(--radius-lg);
+  }
+
+  .player-name {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .player-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .player-team {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+
+  .team-logo-inline {
+    width: 24px;
+    height: 24px;
+  }
+
+  .player-position {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-primary);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-md);
+  }
+
+  .player-bio {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .player-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-6);
+  }
+
+  .player-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stat-card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-primary);
+  }
+
+  .stats-placeholder {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  /* Sidebar */
+  .widget {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .widget-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .player-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+  }
+
+  .info-item dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-weight: var(--font-medium);
+  }
+
+  .info-item dd {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    font-weight: var(--font-semibold);
+    text-align: right;
+  }
+
+  .quick-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .quick-links a {
+    padding: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+  }
+
+  .quick-links a:hover {
+    background: var(--color-bg);
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 1024px) {
+    .player-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .player-sidebar {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .player-header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .player-name {
+      font-size: var(--text-2xl);
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .player-bio {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+  }
+</style>

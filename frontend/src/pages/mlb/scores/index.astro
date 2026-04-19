@@ -1,0 +1,344 @@
+---
+/**
+ * MLB Scores Page
+ * Liste complète des scores MLB du jour avec filtres et tri
+ */
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import GameCard from '@components/ui/GameCard.astro';
+
+// Mock data - à remplacer par API MLBStatsProvider
+const todayDate = new Date().toLocaleDateString('fr-FR', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const games = [
+  {
+    homeTeam: 'Los Angeles Dodgers',
+    awayTeam: 'New York Yankees',
+    homeScore: 5,
+    awayScore: 3,
+    status: 'live' as const,
+    startTime: new Date(),
+    gameId: 'mlb-1',
+    league: 'MLB',
+    inning: 'T7',
+  },
+  {
+    homeTeam: 'Boston Red Sox',
+    awayTeam: 'Toronto Blue Jays',
+    homeScore: 4,
+    awayScore: 2,
+    status: 'final' as const,
+    startTime: new Date(),
+    gameId: 'mlb-2',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Houston Astros',
+    awayTeam: 'Seattle Mariners',
+    homeScore: 2,
+    awayScore: 6,
+    status: 'final' as const,
+    startTime: new Date(),
+    gameId: 'mlb-3',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Atlanta Braves',
+    awayTeam: 'Philadelphia Phillies',
+    homeScore: null,
+    awayScore: null,
+    status: 'scheduled' as const,
+    startTime: new Date(Date.now() + 7200000),
+    gameId: 'mlb-4',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'San Francisco Giants',
+    awayTeam: 'Chicago Cubs',
+    homeScore: null,
+    awayScore: null,
+    status: 'scheduled' as const,
+    startTime: new Date(Date.now() + 10800000),
+    gameId: 'mlb-5',
+    league: 'MLB',
+  },
+  {
+    homeTeam: 'Tampa Bay Rays',
+    awayTeam: 'Baltimore Orioles',
+    homeScore: 3,
+    awayScore: 3,
+    status: 'live' as const,
+    startTime: new Date(),
+    gameId: 'mlb-6',
+    league: 'MLB',
+    inning: 'B4',
+  },
+];
+
+// Filtrer par statut
+const liveGames = games.filter((g) => g.status === 'live');
+const finalGames = games.filter((g) => g.status === 'final');
+const scheduledGames = games.filter((g) => g.status === 'scheduled');
+---
+
+<BaseLayout
+  title="MLB Scores en Direct - Résultats et Matchs du Jour | home-run.fr"
+  description="Suivez tous les scores MLB en direct. Résultats des matchs, calendrier et statistiques de la Major League Baseball."
+>
+  <div class="scores-page">
+    <div class="container">
+      <!-- Hero -->
+      <div class="page-hero">
+        <div class="breadcrumb">
+          <a href="/">Accueil</a> / <a href="/mlb/">MLB</a> / <span>Scores</span>
+        </div>
+        <h1 class="page-title">SCORES MLB</h1>
+        <p class="page-subtitle">{todayDate}</p>
+      </div>
+
+      <!-- Filtres rapides -->
+      <div class="filters">
+        <button class="filter-btn filter-active">Tous ({games.length})</button>
+        <button class="filter-btn">En direct ({liveGames.length})</button>
+        <button class="filter-btn">Terminés ({finalGames.length})</button>
+        <button class="filter-btn">À venir ({scheduledGames.length})</button>
+      </div>
+
+      <!-- Scores en direct -->
+      {liveGames.length > 0 && (
+        <section class="scores-section">
+          <h2 class="section-title">🔴 EN DIRECT</h2>
+          <div class="games-grid">
+            {liveGames.map((game) => (
+              <GameCard {...game} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Scores terminés -->
+      {finalGames.length > 0 && (
+        <section class="scores-section">
+          <h2 class="section-title">TERMINÉS</h2>
+          <div class="games-grid">
+            {finalGames.map((game) => (
+              <GameCard {...game} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Matchs à venir -->
+      {scheduledGames.length > 0 && (
+        <section class="scores-section">
+          <h2 class="section-title">À VENIR</h2>
+          <div class="games-grid">
+            {scheduledGames.map((game) => (
+              <GameCard {...game} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Empty state si aucun match -->
+      {games.length === 0 && (
+        <div class="empty-state">
+          <p>Aucun match programmé aujourd'hui</p>
+          <a href="/mlb/calendrier/" class="btn-secondary">Voir le calendrier</a>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .scores-page {
+    padding: 16px 0 48px 0;
+  }
+
+  /* Hero */
+  .page-hero {
+    margin-bottom: 24px;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-red);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e8102e 0%, #ff6b9d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--color-text-muted);
+    text-transform: capitalize;
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 32px;
+    }
+  }
+
+  /* Filtres */
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-base);
+  }
+
+  .filter-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+  }
+
+  .filter-active {
+    color: white !important;
+    background: var(--color-red) !important;
+    border-color: var(--color-red) !important;
+  }
+
+  /* Sections */
+  .scores-section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    margin-bottom: 16px;
+  }
+
+  /* Games grid */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .games-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 64px 24px;
+  }
+
+  .empty-state p {
+    font-size: 18px;
+    color: var(--color-text-muted);
+    margin-bottom: 24px;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 12px 24px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-red);
+    color: var(--color-red);
+  }
+</style>
+
+<script>
+  // Filtres interactifs
+  const filterBtns = document.querySelectorAll<HTMLElement>('.filter-btn');
+  const sections = document.querySelectorAll<HTMLElement>('.scores-section');
+
+  filterBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      // Remove active class from all
+      filterBtns.forEach((b) => b.classList.remove('filter-active'));
+      // Add to clicked
+      btn.classList.add('filter-active');
+
+      // Show/hide sections based on filter
+      if (index === 0) {
+        // Tous
+        sections.forEach((s) => (s.style.display = 'block'));
+      } else if (index === 1) {
+        // En direct
+        sections.forEach((s, i) => {
+          s.style.display = i === 0 ? 'block' : 'none';
+        });
+      } else if (index === 2) {
+        // Terminés
+        sections.forEach((s, i) => {
+          s.style.display = i === 1 ? 'block' : 'none';
+        });
+      } else if (index === 3) {
+        // À venir
+        sections.forEach((s, i) => {
+          s.style.display = i === 2 ? 'block' : 'none';
+        });
+      }
+    });
+  });
+</script>

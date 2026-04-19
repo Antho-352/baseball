@@ -1,0 +1,117 @@
+---
+/**
+ * KBO Standings Page
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Mock standings
+const standings = [
+  { rank: 1, team: 'SSG Landers', wins: 45, losses: 28, pct: 0.616, gb: 0 },
+  { rank: 2, team: 'LG Twins', wins: 43, losses: 30, pct: 0.589, gb: 2.0 },
+  { rank: 3, team: 'Samsung Lions', wins: 41, losses: 32, pct: 0.562, gb: 4.0 },
+  { rank: 4, team: 'KIA Tigers', wins: 39, losses: 34, pct: 0.534, gb: 6.0 },
+  { rank: 5, team: 'Doosan Bears', wins: 38, losses: 35, pct: 0.521, gb: 7.0 },
+  { rank: 6, team: 'Kiwoom Heroes', wins: 36, losses: 37, pct: 0.493, gb: 9.0 },
+  { rank: 7, team: 'Lotte Giants', wins: 34, losses: 39, pct: 0.466, gb: 11.0 },
+  { rank: 8, team: 'NC Dinos', wins: 32, losses: 41, pct: 0.438, gb: 13.0 },
+  { rank: 9, team: 'Hanwha Eagles', wins: 30, losses: 43, pct: 0.411, gb: 15.0 },
+  { rank: 10, team: 'KT Wiz', wins: 28, losses: 45, pct: 0.384, gb: 17.0 },
+];
+
+const title = 'Classement KBO 2026 : Korean Baseball Organization';
+const description = 'Classement complet de la KBO 2026 : toutes les équipes, victoires, défaites et statistiques.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Classement KBO 2026</h1>
+      <p class="page-description">Classement général de la saison</p>
+    </header>
+
+    <div class="standings-wrapper">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Équipe</th>
+            <th>V</th>
+            <th>D</th>
+            <th>%</th>
+            <th>GB</th>
+          </tr>
+        </thead>
+        <tbody>
+          {standings.map(team => (
+            <tr>
+              <td>{team.rank}</td>
+              <td><strong>{team.team}</strong></td>
+              <td>{team.wins}</td>
+              <td>{team.losses}</td>
+              <td>{team.pct.toFixed(3)}</td>
+              <td>{team.gb === 0 ? '-' : team.gb}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box">
+      <p><strong>Note:</strong> Classement mis à jour quotidiennement via TheSportsDB API.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-6);
+    text-align: center;
+  }
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .standings-wrapper {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--space-6);
+  }
+  .standings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .standings-table thead {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+  }
+  .standings-table th {
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    text-align: left;
+  }
+  .standings-table td {
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .standings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .standings-table tbody tr:hover {
+    background: var(--color-bg);
+  }
+  .info-box {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

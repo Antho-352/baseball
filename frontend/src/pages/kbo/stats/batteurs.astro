@@ -1,0 +1,130 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const mockStats = [
+  { rank: 1, name: 'Kim Hyun-soo', team: 'LG Twins', avg: '.328', hr: 22, rbi: 89, hits: 145, sb: 8 },
+  { rank: 2, name: 'Choi Jeong', team: 'SSG Landers', avg: '.312', hr: 38, rbi: 105, hits: 138, sb: 2 },
+  { rank: 3, name: 'Yang Eui-ji', team: 'Doosan Bears', avg: '.314', hr: 18, rbi: 78, hits: 142, sb: 5 },
+  { rank: 4, name: 'Na Sung-bum', team: 'KIA Tigers', avg: '.305', hr: 28, rbi: 95, hits: 136, sb: 12 },
+  { rank: 5, name: 'Koo Ja-wook', team: 'Samsung Lions', avg: '.298', hr: 31, rbi: 92, hits: 129, sb: 4 },
+];
+
+const title = 'Stats Batteurs KBO - Leaders Saison 2026 | home-run.fr';
+const description = 'Statistiques des meilleurs batteurs de la KBO : moyenne, home runs, RBI, hits et stolen bases.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">🏏 Batteurs KBO - Saison 2026</h1>
+      <p class="page-description">Leaders statistiques des batteurs</p>
+      <div class="back-link"><a href="/kbo/stats/">← Toutes les stats KBO</a></div>
+    </header>
+
+    <div class="stats-tables">
+      <section class="stat-section">
+        <h2 class="stat-title">Leaders - Moyenne au bâton (AVG)</h2>
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Joueur</th>
+              <th>Équipe</th>
+              <th>AVG</th>
+              <th>HR</th>
+              <th>RBI</th>
+              <th>H</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockStats.sort((a,b) => parseFloat(b.avg) - parseFloat(a.avg)).slice(0,10).map((player, idx) => (
+              <tr>
+                <td>{idx + 1}</td>
+                <td class="player-name">{player.name}</td>
+                <td>{player.team}</td>
+                <td class="stat-highlight">{player.avg}</td>
+                <td>{player.hr}</td>
+                <td>{player.rbi}</td>
+                <td>{player.hits}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="stat-section">
+        <h2 class="stat-title">Leaders - Home Runs (HR)</h2>
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Joueur</th>
+              <th>Équipe</th>
+              <th>HR</th>
+              <th>AVG</th>
+              <th>RBI</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockStats.sort((a,b) => b.hr - a.hr).slice(0,10).map((player, idx) => (
+              <tr>
+                <td>{idx + 1}</td>
+                <td class="player-name">{player.name}</td>
+                <td>{player.team}</td>
+                <td class="stat-highlight">{player.hr}</td>
+                <td>{player.avg}</td>
+                <td>{player.rbi}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="stat-section">
+        <h2 class="stat-title">Leaders - RBI</h2>
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Joueur</th>
+              <th>Équipe</th>
+              <th>RBI</th>
+              <th>HR</th>
+              <th>AVG</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockStats.sort((a,b) => b.rbi - a.rbi).slice(0,10).map((player, idx) => (
+              <tr>
+                <td>{idx + 1}</td>
+                <td class="player-name">{player.name}</td>
+                <td>{player.team}</td>
+                <td class="stat-highlight">{player.rbi}</td>
+                <td>{player.hr}</td>
+                <td>{player.avg}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container { max-width: 1400px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+  .page-header { margin-bottom: var(--space-6); text-align: center; }
+  .page-title { font-family: var(--font-display); font-size: var(--text-4xl); font-weight: var(--font-extrabold); color: var(--color-text); margin-bottom: var(--space-3); }
+  .page-description { font-size: var(--text-lg); color: var(--color-text-muted); margin-bottom: var(--space-3); }
+  .back-link a { color: var(--color-primary); text-decoration: none; }
+  .stats-tables { display: flex; flex-direction: column; gap: var(--space-8); }
+  .stat-section { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); }
+  .stat-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--font-bold); margin-bottom: var(--space-4); color: var(--color-text); }
+  .stat-table { width: 100%; border-collapse: collapse; }
+  .stat-table thead { background: var(--color-surface-2); }
+  .stat-table th { padding: var(--space-3); font-size: var(--text-sm); font-weight: var(--font-bold); text-align: left; color: var(--color-text-muted); border-bottom: 2px solid var(--color-border); }
+  .stat-table td { padding: var(--space-3); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+  .player-name { font-weight: var(--font-semibold); color: var(--color-text); }
+  .stat-highlight { font-family: var(--font-display); font-weight: var(--font-bold); color: var(--color-primary); font-size: var(--text-base); }
+  .stat-table tbody tr:hover { background: var(--color-surface-2); }
+</style>

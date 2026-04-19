@@ -1,0 +1,207 @@
+---
+/**
+ * Responsible Gambling Notice Component
+ * ANJ (Autorité Nationale des Jeux) compliance
+ *
+ * Two variants:
+ * - inline: Single line, compact (for in-content)
+ * - footer: Full block with phone number (for page footer)
+ */
+
+interface Props {
+  variant?: 'inline' | 'footer';
+}
+
+const { variant = 'inline' } = Astro.props;
+---
+
+{variant === 'inline' ? (
+  <div class="anj-notice-inline">
+    <span class="anj-icon">18+</span>
+    <span class="anj-text">
+      Jouer comporte des risques ·
+      <a href="/jeu-responsable/" class="anj-link">En savoir plus</a>
+    </span>
+  </div>
+) : (
+  <div class="anj-notice-footer">
+    <div class="anj-header">
+      <span class="anj-icon-large">18+</span>
+      <h4 class="anj-title">Jeu Responsable</h4>
+    </div>
+    <div class="anj-content">
+      <p class="anj-warning">
+        L'accès aux contenus liés aux paris sportifs est strictement réservé aux personnes majeures (18 ans ou plus).
+        Le jeu doit rester un loisir. Si vous ressentez une perte de contrôle, n'hésitez pas à en parler.
+      </p>
+      <div class="anj-contact">
+        <a href="tel:0974751313" class="anj-phone">
+          📞 09 74 75 13 13
+        </a>
+        <span class="anj-separator">·</span>
+        <a href="https://www.joueurs-info-service.fr/" target="_blank" rel="noopener noreferrer" class="anj-website">
+          joueurs-info-service.fr
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  /* ==================== INLINE VARIANT ==================== */
+  .anj-notice-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--color-surface-2);
+    border-left: 2px solid #d4af37; /* Gold border */
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    color: var(--color-text-faint);
+    line-height: 1.4;
+  }
+
+  .anj-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 16px;
+    background: #d4af37;
+    color: #000000;
+    font-size: 9px;
+    font-weight: 800;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .anj-text {
+    flex: 1;
+  }
+
+  .anj-link {
+    color: var(--color-red);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .anj-link:hover {
+    color: var(--color-primary);
+  }
+
+  /* ==================== FOOTER VARIANT ==================== */
+  .anj-notice-footer {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-left: 3px solid #d4af37;
+    border-radius: var(--radius-md);
+  }
+
+  .anj-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .anj-icon-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #d4af37;
+    color: #000000;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+
+  .anj-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .anj-content {
+    padding-left: 40px; /* Align with title after icon */
+  }
+
+  .anj-warning {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .anj-contact {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .anj-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .anj-phone:hover {
+    background: var(--color-surface-3);
+    transform: translateY(-2px);
+  }
+
+  .anj-separator {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  .anj-website {
+    font-size: 13px;
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .anj-website:hover {
+    color: var(--color-primary-hover);
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .anj-notice-footer {
+      padding: var(--space-3);
+    }
+
+    .anj-content {
+      padding-left: 0;
+      margin-top: var(--space-2);
+    }
+
+    .anj-contact {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+    }
+
+    .anj-separator {
+      display: none;
+    }
+  }
+</style>

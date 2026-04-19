@@ -1,0 +1,172 @@
+---
+/**
+ * NPB Teams List Page
+ * Lists all 12 NPB teams (6 Central + 6 Pacific)
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getNPBLogo } from '@lib/constants/logos';
+
+// NPB teams by league
+const centralLeague = [
+  { name: 'Yomiuri Giants', slug: 'yomiuri-giants', city: 'Tokyo' },
+  { name: 'Hanshin Tigers', slug: 'hanshin-tigers', city: 'Nishinomiya' },
+  { name: 'Chunichi Dragons', slug: 'chunichi-dragons', city: 'Nagoya' },
+  { name: 'Hiroshima Toyo Carp', slug: 'hiroshima-toyo-carp', city: 'Hiroshima' },
+  { name: 'Tokyo Yakult Swallows', slug: 'tokyo-yakult-swallows', city: 'Tokyo' },
+  { name: 'Yokohama DeNA BayStars', slug: 'yokohama-dena-baystars', city: 'Yokohama' },
+];
+
+const pacificLeague = [
+  { name: 'Fukuoka SoftBank Hawks', slug: 'fukuoka-softbank-hawks', city: 'Fukuoka' },
+  { name: 'Orix Buffaloes', slug: 'orix-buffaloes', city: 'Osaka' },
+  { name: 'Saitama Seibu Lions', slug: 'saitama-seibu-lions', city: 'Tokorozawa' },
+  { name: 'Chiba Lotte Marines', slug: 'chiba-lotte-marines', city: 'Chiba' },
+  { name: 'Tohoku Rakuten Golden Eagles', slug: 'tohoku-rakuten-golden-eagles', city: 'Sendai' },
+  { name: 'Hokkaido Nippon-Ham Fighters', slug: 'hokkaido-nippon-ham-fighters', city: 'Sapporo' },
+];
+
+const title = 'Équipes NPB : Toutes les franchises de Nippon Professional Baseball';
+const description = 'Découvrez les 12 équipes de la NPB : statistiques, rosters, calendriers et actualités de chaque franchise.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Équipes NPB</h1>
+      <p class="page-description">
+        Les 12 franchises de Nippon Professional Baseball
+      </p>
+    </header>
+
+    <section class="league-section">
+      <h2 class="league-title">Central League</h2>
+      <div class="teams-grid">
+        {centralLeague.map((team) => (
+          <a href={`/npb/equipes/${team.slug}/`} class="team-card">
+            <div class="team-logo">
+              <img src={getNPBLogo(team.name)} alt={team.name} loading="lazy" />
+            </div>
+            <div class="team-info">
+              <h3 class="team-name">{team.name}</h3>
+              <p class="team-city">{team.city}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="league-section">
+      <h2 class="league-title">Pacific League</h2>
+      <div class="teams-grid">
+        {pacificLeague.map((team) => (
+          <a href={`/npb/equipes/${team.slug}/`} class="team-card">
+            <div class="team-logo">
+              <img src={getNPBLogo(team.name)} alt={team.name} loading="lazy" />
+            </div>
+            <div class="team-info">
+              <h3 class="team-name">{team.name}</h3>
+              <p class="team-city">{team.city}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-8);
+    text-align: center;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  .league-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .league-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .team-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .team-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+  }
+
+  .team-logo {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+  }
+
+  .team-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .team-info {
+    flex: 1;
+  }
+
+  .team-name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+  }
+
+  .team-city {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .teams-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+  }
+</style>

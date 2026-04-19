@@ -1,0 +1,5 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#059669" rx="10"/>
+  <text x="100" y="85" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">UNIBET</text>
+  <text x="100" y="125" font-family="Arial, sans-serif" font-size="14" fill="#6ee7b7" text-anchor="middle">(Placeholder)</text>
+</svg>
