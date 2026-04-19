@@ -26,6 +26,7 @@ import bookmakersRouter from './routes/bookmakers.js';
 import cronRouter from './routes/cron.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
+import sitemapRouter from './routes/sitemap.js';
 
 // Load environment variables
 dotenv.config();
@@ -102,6 +103,9 @@ app.use('/api/standings', standingsRouter);
 app.use('/api/predictions', predictionsRouter);
 app.use('/api/articles', articlesRouter);
 app.use('/api/bookmakers', bookmakersRouter);
+
+// SEO
+app.use('/sitemap.xml', sitemapRouter);
 
 // Cron endpoints (protected by API key)
 app.use('/api/cron', cronRouter);

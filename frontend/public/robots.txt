@@ -1,0 +1,12 @@
+# robots.txt - home-run.fr
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://home-run.fr/sitemap.xml
+
+# Block CMS (if exists on subdomain)
+User-agent: *
+Disallow: /cms/
+Disallow: /admin/
